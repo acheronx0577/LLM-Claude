@@ -1,0 +1,5 @@
+node_modules/
+.env
+.cursor/
+package-lock.json
+temp-build/
