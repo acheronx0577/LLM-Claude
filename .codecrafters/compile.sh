@@ -5,4 +5,7 @@
 # This runs before .codecrafters/run.sh
 #
 # Learn more: https://codecrafters.io/program-interface
-
+
+set -e # Exit on failure
+
+# (This file is empty since TypeScript programs don't use a compile step)
