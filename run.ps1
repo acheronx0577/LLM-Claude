@@ -29,4 +29,12 @@ if ($Interactive -or ($Rest -contains "-i") -or ($Rest -contains "--chat")) {
   } else {
     & $bun "$PSScriptRoot\app\main.ts" -i --tui
   }
-  exit $LASTEXITCODE
+  exit $LASTEXITCODE
+}
+
+if (-not $Prompt) {
+  if ($Rest.Count -ge 2 -and $Rest[0] -eq "-p") {
+    $Prompt = ($Rest[1..($Rest.Count - 1)] -join " ").Trim()
+  } elseif ($Rest.Count -ge 1) {
+    $Prompt = ($Rest -join " ").Trim()
+  }
