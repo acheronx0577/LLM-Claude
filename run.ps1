@@ -21,4 +21,12 @@ Set-Location $PSScriptRoot
 if ($Acp -or ($Rest -contains "--acp")) {
   & $bun "$PSScriptRoot\app\main.ts" --acp
   exit $LASTEXITCODE
-}
+}
+
+if ($Interactive -or ($Rest -contains "-i") -or ($Rest -contains "--chat")) {
+  if ($Plain -or ($Rest -contains "--plain")) {
+    & $bun "$PSScriptRoot\app\main.ts" -i --plain
+  } else {
+    & $bun "$PSScriptRoot\app\main.ts" -i --tui
+  }
+  exit $LASTEXITCODE
