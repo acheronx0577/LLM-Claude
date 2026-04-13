@@ -45,4 +45,8 @@ if (-not $Prompt) {
     & $bun "$PSScriptRoot\app\main.ts" -i --plain
   } else {
     & $bun "$PSScriptRoot\app\main.ts" -i --tui
-  }
+  }
+  exit $LASTEXITCODE
+}
+
+& $bun "$PSScriptRoot\app\main.ts" -p $Prompt
