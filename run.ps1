@@ -37,4 +37,12 @@ if (-not $Prompt) {
     $Prompt = ($Rest[1..($Rest.Count - 1)] -join " ").Trim()
   } elseif ($Rest.Count -ge 1) {
     $Prompt = ($Rest -join " ").Trim()
+  }
+}
+
+if (-not $Prompt) {
+  if ($Plain -or ($Rest -contains "--plain")) {
+    & $bun "$PSScriptRoot\app\main.ts" -i --plain
+  } else {
+    & $bun "$PSScriptRoot\app\main.ts" -i --tui
   }
