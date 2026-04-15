@@ -13,4 +13,6 @@ if /i "%~1"=="-p" (
 "%USERPROFILE%\.bun\bin\bun.exe" run "%~dp0app\main.ts" -p %*
 exit /b %ERRORLEVEL%
 
-:interactive
+:interactive
+"%USERPROFILE%\.bun\bin\bun.exe" run "%~dp0app\main.ts" -i
+exit /b %ERRORLEVEL%
