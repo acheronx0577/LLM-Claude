@@ -21,4 +21,12 @@ export function loadApiConfig(): ApiConfig {
       model: process.env.GROQ_MODEL ?? "openai/gpt-oss-120b",
       client: new OpenAI({
         apiKey: groqApiKey,
-        baseURL: "https://api.groq.com/openai/v1",
+        baseURL: "https://api.groq.com/openai/v1",
+      }),
+    };
+  }
+
+  return {
+    provider: "openrouter",
+    model: "anthropic/claude-haiku-4.5",
+    client: new OpenAI({
