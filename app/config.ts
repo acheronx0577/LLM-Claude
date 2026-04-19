@@ -13,4 +13,12 @@ export function loadApiConfig(): ApiConfig {
 
   if (!apiKey) {
     throw new Error("OPENROUTER_API_KEY or GROQ_API_KEY is not set");
-  }
+  }
+
+  if (groqApiKey) {
+    return {
+      provider: "groq",
+      model: process.env.GROQ_MODEL ?? "openai/gpt-oss-120b",
+      client: new OpenAI({
+        apiKey: groqApiKey,
+        baseURL: "https://api.groq.com/openai/v1",
