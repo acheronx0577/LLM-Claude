@@ -29,4 +29,10 @@ export function loadApiConfig(): ApiConfig {
   return {
     provider: "openrouter",
     model: "anthropic/claude-haiku-4.5",
-    client: new OpenAI({
+    client: new OpenAI({
+      apiKey: openRouterApiKey!,
+      baseURL:
+        process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1",
+    }),
+  };
+}
