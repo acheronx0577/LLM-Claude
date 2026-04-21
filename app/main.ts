@@ -5,4 +5,12 @@ import { loadApiConfig } from "./config.ts";
 import { runInteractiveTuiChat } from "./tuiChat.ts";
 
 async function main() {
-  const args = process.argv.slice(2);
+  const args = process.argv.slice(2);
+
+  if (args.includes("--acp")) {
+    runAcpServer(loadApiConfig());
+    return;
+  }
+
+  const parsed = parseArgs(args);
+  const config = loadApiConfig();
