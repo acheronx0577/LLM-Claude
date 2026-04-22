@@ -21,4 +21,12 @@ async function main() {
 
   if (parsed.interactive) {
     if (shouldUseTuiChat(parsed)) {
-      try {
+      try {
+        await runInteractiveTuiChat(config);
+      } catch (error) {
+        if (parsed.plain) {
+          throw error;
+        }
+
+        console.error(
+          "TUI unavailable, falling back to plain chat (--plain to skip this message).\n",
