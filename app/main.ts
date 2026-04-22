@@ -13,4 +13,12 @@ async function main() {
   }
 
   const parsed = parseArgs(args);
-  const config = loadApiConfig();
+  const config = loadApiConfig();
+
+  if (!parsed.interactive && !parsed.prompt) {
+    throw new Error("error: -p flag is required");
+  }
+
+  if (parsed.interactive) {
+    if (shouldUseTuiChat(parsed)) {
+      try {
