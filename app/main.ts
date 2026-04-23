@@ -37,4 +37,12 @@ async function main() {
     }
 
     await runInteractiveChat(config);
-    return;
+    return;
+  }
+
+  const messages = [{ role: "user" as const, content: parsed.prompt! }];
+
+  // You can use print statements as follows for debugging, they'll be visible when running tests.
+  console.error("Logs from your program will appear here!");
+
+  console.log(await runAgent(config.client, config.model, messages));
