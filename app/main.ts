@@ -29,4 +29,12 @@ async function main() {
         }
 
         console.error(
-          "TUI unavailable, falling back to plain chat (--plain to skip this message).\n",
+          "TUI unavailable, falling back to plain chat (--plain to skip this message).\n",
+        );
+        await runInteractiveChat(config);
+      }
+      return;
+    }
+
+    await runInteractiveChat(config);
+    return;
