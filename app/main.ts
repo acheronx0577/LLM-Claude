@@ -45,4 +45,11 @@ async function main() {
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error("Logs from your program will appear here!");
 
-  console.log(await runAgent(config.client, config.model, messages));
+  console.log(await runAgent(config.client, config.model, messages));
+}
+
+main().catch((error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(message);
+  process.exit(1);
+});
