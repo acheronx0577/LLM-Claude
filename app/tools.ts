@@ -13,4 +13,12 @@ import {
   buildWritePreview,
   fileChangeFromEditPlan,
 } from "./editApproval.ts";
-import type { McpSession } from "./mcp.ts";
+import type { McpSession } from "./mcp.ts";
+
+const execAsync = promisify(exec);
+
+const readTool: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: "Read",
+    description: "Read and return the contents of a file",
