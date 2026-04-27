@@ -29,4 +29,12 @@ const readTool: ChatCompletionTool = {
           type: "string",
           description: "The path to the file to read",
         },
-      },
+      },
+      required: ["file_path"],
+    },
+  },
+};
+
+const writeTool: ChatCompletionTool = {
+  type: "function",
+  function: {
