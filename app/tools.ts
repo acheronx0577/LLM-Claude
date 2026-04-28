@@ -37,4 +37,12 @@ const readTool: ChatCompletionTool = {
 
 const writeTool: ChatCompletionTool = {
   type: "function",
-  function: {
+  function: {
+    name: "Write",
+    description: "Write content to a file",
+    parameters: {
+      type: "object",
+      required: ["file_path", "content"],
+      properties: {
+        file_path: {
+          type: "string",
