@@ -45,4 +45,12 @@ const writeTool: ChatCompletionTool = {
       required: ["file_path", "content"],
       properties: {
         file_path: {
-          type: "string",
+          type: "string",
+          description: "The path of the file to write to",
+        },
+        content: {
+          type: "string",
+          description: "The content to write to the file",
+        },
+      },
+    },
