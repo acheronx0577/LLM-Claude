@@ -53,4 +53,12 @@ const writeTool: ChatCompletionTool = {
           description: "The content to write to the file",
         },
       },
-    },
+    },
+  },
+};
+
+const bashTool: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: "Bash",
+    description: "Execute a shell command",
