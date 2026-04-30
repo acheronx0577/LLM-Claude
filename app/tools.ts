@@ -69,4 +69,12 @@ const bashTool: ChatCompletionTool = {
         command: {
           type: "string",
           description: "The command to execute",
-        },
+        },
+      },
+    },
+  },
+};
+
+const webSearchTool: ChatCompletionTool = {
+  type: "function",
+  function: {
