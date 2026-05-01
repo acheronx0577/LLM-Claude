@@ -85,4 +85,12 @@ const webSearchTool: ChatCompletionTool = {
       required: ["query"],
       properties: {
         query: {
-          type: "string",
+          type: "string",
+          description: "The search query",
+        },
+      },
+    },
+  },
+};
+
+const goToDefinitionTool: ChatCompletionTool = {
