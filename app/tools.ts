@@ -77,4 +77,12 @@ const bashTool: ChatCompletionTool = {
 
 const webSearchTool: ChatCompletionTool = {
   type: "function",
-  function: {
+  function: {
+    name: "WebSearch",
+    description: "Search the web for current information",
+    parameters: {
+      type: "object",
+      required: ["query"],
+      properties: {
+        query: {
+          type: "string",
