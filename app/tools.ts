@@ -93,4 +93,12 @@ const webSearchTool: ChatCompletionTool = {
   },
 };
 
-const goToDefinitionTool: ChatCompletionTool = {
+const goToDefinitionTool: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: "GoToDefinition",
+    description: "Jump to the definition of a symbol at a file position",
+    parameters: {
+      type: "object",
+      required: ["file_path", "line", "column"],
+      properties: {
