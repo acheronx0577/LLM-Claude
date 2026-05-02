@@ -101,4 +101,12 @@ const goToDefinitionTool: ChatCompletionTool = {
     parameters: {
       type: "object",
       required: ["file_path", "line", "column"],
-      properties: {
+      properties: {
+        file_path: {
+          type: "string",
+          description: "Path to the source file",
+        },
+        line: {
+          type: "number",
+          description: "1-based line number",
+        },
