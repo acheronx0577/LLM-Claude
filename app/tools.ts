@@ -117,4 +117,12 @@ const goToDefinitionTool: ChatCompletionTool = {
       },
     },
   },
-};
+};
+
+const findReferencesTool: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: "FindReferences",
+    description: "Find all references to a symbol at a file position",
+    parameters: {
+      type: "object",
