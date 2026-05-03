@@ -109,4 +109,12 @@ const goToDefinitionTool: ChatCompletionTool = {
         line: {
           type: "number",
           description: "1-based line number",
-        },
+        },
+        column: {
+          type: "number",
+          description: "1-based column number",
+        },
+      },
+    },
+  },
+};
