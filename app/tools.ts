@@ -125,4 +125,12 @@ const findReferencesTool: ChatCompletionTool = {
     name: "FindReferences",
     description: "Find all references to a symbol at a file position",
     parameters: {
-      type: "object",
+      type: "object",
+      required: ["file_path", "line", "column"],
+      properties: {
+        file_path: {
+          type: "string",
+          description: "Path to the source file",
+        },
+        line: {
+          type: "number",
