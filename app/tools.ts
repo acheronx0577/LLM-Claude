@@ -133,4 +133,12 @@ const findReferencesTool: ChatCompletionTool = {
           description: "Path to the source file",
         },
         line: {
-          type: "number",
+          type: "number",
+          description: "1-based line number",
+        },
+        column: {
+          type: "number",
+          description: "1-based column number",
+        },
+      },
+    },
