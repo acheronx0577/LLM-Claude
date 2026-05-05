@@ -141,4 +141,12 @@ const findReferencesTool: ChatCompletionTool = {
           description: "1-based column number",
         },
       },
-    },
+    },
+  },
+};
+
+const getDiagnosticsTool: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: "GetDiagnostics",
+    description:
