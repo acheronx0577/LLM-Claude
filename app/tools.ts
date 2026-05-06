@@ -149,4 +149,12 @@ const getDiagnosticsTool: ChatCompletionTool = {
   type: "function",
   function: {
     name: "GetDiagnostics",
-    description:
+    description:
+      "Get TypeScript errors and warnings for a file or the whole project",
+    parameters: {
+      type: "object",
+      properties: {
+        file_path: {
+          type: "string",
+          description:
+            "Optional path to a file. Omit to check the entire project.",
