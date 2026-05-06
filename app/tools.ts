@@ -157,4 +157,12 @@ const getDiagnosticsTool: ChatCompletionTool = {
         file_path: {
           type: "string",
           description:
-            "Optional path to a file. Omit to check the entire project.",
+            "Optional path to a file. Omit to check the entire project.",
+        },
+      },
+    },
+  },
+};
+
+const editTool: ChatCompletionTool = {
+  type: "function",
