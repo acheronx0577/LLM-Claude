@@ -165,4 +165,12 @@ const getDiagnosticsTool: ChatCompletionTool = {
 };
 
 const editTool: ChatCompletionTool = {
-  type: "function",
+  type: "function",
+  function: {
+    name: "Edit",
+    description:
+      "Replace a unique string in an existing file without rewriting the whole file. Read the file first and copy exact text into old_string.",
+    parameters: {
+      type: "object",
+      required: ["file_path", "old_string", "new_string"],
+      properties: {
