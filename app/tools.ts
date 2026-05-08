@@ -173,4 +173,12 @@ const editTool: ChatCompletionTool = {
     parameters: {
       type: "object",
       required: ["file_path", "old_string", "new_string"],
-      properties: {
+      properties: {
+        file_path: {
+          type: "string",
+          description: "Path to the file to edit",
+        },
+        old_string: {
+          type: "string",
+          description:
+            "Exact text to find in the file (must match once unless replace_all is true)",
