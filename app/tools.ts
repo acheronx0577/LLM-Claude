@@ -181,4 +181,12 @@ const editTool: ChatCompletionTool = {
         old_string: {
           type: "string",
           description:
-            "Exact text to find in the file (must match once unless replace_all is true)",
+            "Exact text to find in the file (must match once unless replace_all is true)",
+        },
+        new_string: {
+          type: "string",
+          description: "Text to replace old_string with",
+        },
+        replace_all: {
+          type: "boolean",
+          description:
