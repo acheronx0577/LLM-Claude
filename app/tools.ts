@@ -197,4 +197,12 @@ const editTool: ChatCompletionTool = {
   },
 };
 
-/** CodeCrafters submit — Read, Write, Bash only (smaller API payload). */
+/** CodeCrafters submit — Read, Write, Bash only (smaller API payload). */
+export const coreTools: ChatCompletionTool[] = [readTool, writeTool, bashTool];
+
+/** Interactive chat — core tools plus local extras. */
+export const chatTools: ChatCompletionTool[] = [
+  ...coreTools,
+  editTool,
+  webSearchTool,
+  goToDefinitionTool,
