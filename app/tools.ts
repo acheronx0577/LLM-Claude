@@ -189,4 +189,12 @@ const editTool: ChatCompletionTool = {
         },
         replace_all: {
           type: "boolean",
-          description:
+          description:
+            "Replace every occurrence of old_string. Default false (requires a unique match).",
+        },
+      },
+    },
+  },
+};
+
+/** CodeCrafters submit — Read, Write, Bash only (smaller API payload). */
