@@ -205,4 +205,12 @@ export const chatTools: ChatCompletionTool[] = [
   ...coreTools,
   editTool,
   webSearchTool,
-  goToDefinitionTool,
+  goToDefinitionTool,
+  findReferencesTool,
+  getDiagnosticsTool,
+];
+
+function truncateResult(content: string): string {
+  return truncateToolResult(content);
+}
+
