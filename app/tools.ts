@@ -213,4 +213,12 @@ export const chatTools: ChatCompletionTool[] = [
 function truncateResult(content: string): string {
   return truncateToolResult(content);
 }
-
+
+function logToolUse(
+  name: string,
+  detail: string,
+  verbose: boolean,
+  hideDetail = false,
+): void {
+  if (!verbose) {
+    return;
