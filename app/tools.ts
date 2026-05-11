@@ -221,4 +221,12 @@ function logToolUse(
   hideDetail = false,
 ): void {
   if (!verbose) {
-    return;
+    return;
+  }
+
+  console.error(`→ ${name}(${hideDetail ? "proposed" : detail})`);
+}
+
+function resolveToolPath(filePath: string): string {
+  return resolveWithinProject(process.cwd(), filePath);
+}
