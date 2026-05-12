@@ -237,4 +237,12 @@ export type ExecuteToolOptions = {
     request: FileChangeRequest,
   ) => Promise<FileChangeDecision>;
   mcp?: McpSession | null;
-};
+};
+
+async function requireFileChangeApproval(
+  request: FileChangeRequest,
+  options: ExecuteToolOptions,
+): Promise<FileChangeDecision | "accept"> {
+  if (!options.approveFileChange) {
+    return "accept";
+  }
