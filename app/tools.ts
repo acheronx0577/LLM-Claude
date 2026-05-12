@@ -229,4 +229,12 @@ function logToolUse(
 
 function resolveToolPath(filePath: string): string {
   return resolveWithinProject(process.cwd(), filePath);
-}
+}
+
+export type ExecuteToolOptions = {
+  verbose?: boolean;
+  approveFileChange?: (
+    request: FileChangeRequest,
+  ) => Promise<FileChangeDecision>;
+  mcp?: McpSession | null;
+};
