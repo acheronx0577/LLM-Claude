@@ -245,4 +245,12 @@ async function requireFileChangeApproval(
 ): Promise<FileChangeDecision | "accept"> {
   if (!options.approveFileChange) {
     return "accept";
-  }
+  }
+
+  return options.approveFileChange(request);
+}
+
+type ToolHandler = (
+  rawArgs: string,
+  options: ExecuteToolOptions,
+) => Promise<string>;
