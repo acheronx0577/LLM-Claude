@@ -253,4 +253,12 @@ async function requireFileChangeApproval(
 type ToolHandler = (
   rawArgs: string,
   options: ExecuteToolOptions,
-) => Promise<string>;
+) => Promise<string>;
+
+async function executeMcpTool(
+  name: string,
+  rawArgs: string,
+  options: ExecuteToolOptions,
+): Promise<string> {
+  const args = JSON.parse(rawArgs) as Record<string, unknown>;
+  logToolUse(name, "MCP", options.verbose ?? false);
