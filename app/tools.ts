@@ -261,4 +261,12 @@ async function executeMcpTool(
   options: ExecuteToolOptions,
 ): Promise<string> {
   const args = JSON.parse(rawArgs) as Record<string, unknown>;
-  logToolUse(name, "MCP", options.verbose ?? false);
+  logToolUse(name, "MCP", options.verbose ?? false);
+
+  try {
+    return await options.mcp!.callTool(name, args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "MCP call failed";
+    return `MCP error: ${message}`;
+  }
+}
