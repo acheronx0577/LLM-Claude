@@ -277,4 +277,12 @@ async function executeReadTool(
 ): Promise<string> {
   const args = JSON.parse(rawArgs) as { file_path: string };
   const filePath = resolveToolPath(args.file_path);
-  logToolUse("Read", filePath, options.verbose ?? false);
+  logToolUse("Read", filePath, options.verbose ?? false);
+  return truncateResult(await readFile(filePath, "utf-8"));
+}
+
+async function executeWriteTool(
+  rawArgs: string,
+  options: ExecuteToolOptions,
+): Promise<string> {
+  const args = JSON.parse(rawArgs) as {
