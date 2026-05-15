@@ -269,4 +269,12 @@ async function executeMcpTool(
     const message = error instanceof Error ? error.message : "MCP call failed";
     return `MCP error: ${message}`;
   }
-}
+}
+
+async function executeReadTool(
+  rawArgs: string,
+  options: ExecuteToolOptions,
+): Promise<string> {
+  const args = JSON.parse(rawArgs) as { file_path: string };
+  const filePath = resolveToolPath(args.file_path);
+  logToolUse("Read", filePath, options.verbose ?? false);
