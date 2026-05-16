@@ -293,4 +293,12 @@ async function executeWriteTool(
   logToolUse(
     "Write",
     filePath,
-    options.verbose ?? false,
+    options.verbose ?? false,
+    Boolean(options.approveFileChange),
+  );
+
+  const preview = await buildWritePreview(filePath, args.content);
+  const decision = await requireFileChangeApproval(preview, options);
+
+  if (decision === "decline") {
+    return "Change declined by user.";
