@@ -285,4 +285,12 @@ async function executeWriteTool(
   rawArgs: string,
   options: ExecuteToolOptions,
 ): Promise<string> {
-  const args = JSON.parse(rawArgs) as {
+  const args = JSON.parse(rawArgs) as {
+    file_path: string;
+    content: string;
+  };
+  const filePath = resolveToolPath(args.file_path);
+  logToolUse(
+    "Write",
+    filePath,
+    options.verbose ?? false,
