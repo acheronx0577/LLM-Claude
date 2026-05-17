@@ -301,4 +301,12 @@ async function executeWriteTool(
   const decision = await requireFileChangeApproval(preview, options);
 
   if (decision === "decline") {
-    return "Change declined by user.";
+    return "Change declined by user.";
+  }
+
+  await writeFile(filePath, args.content, "utf-8");
+  return "File written successfully";
+}
+
+async function executeBashTool(
+  rawArgs: string,
