@@ -317,4 +317,12 @@ async function executeBashTool(
 
   try {
     const { stdout, stderr } = await execAsync(args.command, {
-      cwd: process.cwd(),
+      cwd: process.cwd(),
+    });
+    return truncateResult(stdout + stderr);
+  } catch (error) {
+    const execError = error as Error & {
+      stdout?: string;
+      stderr?: string;
+    };
+    const output = (execError.stdout ?? "") + (execError.stderr ?? "");
