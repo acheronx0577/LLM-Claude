@@ -309,4 +309,12 @@ async function executeWriteTool(
 }
 
 async function executeBashTool(
-  rawArgs: string,
+  rawArgs: string,
+  options: ExecuteToolOptions,
+): Promise<string> {
+  const args = JSON.parse(rawArgs) as { command: string };
+  logToolUse("Bash", args.command, options.verbose ?? false);
+
+  try {
+    const { stdout, stderr } = await execAsync(args.command, {
+      cwd: process.cwd(),
