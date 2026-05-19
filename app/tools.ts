@@ -333,4 +333,12 @@ async function executeBashTool(
 async function executeWebSearchTool(
   rawArgs: string,
   options: ExecuteToolOptions,
-): Promise<string> {
+): Promise<string> {
+  const args = JSON.parse(rawArgs) as { query: string };
+  logToolUse("WebSearch", `"${args.query}"`, options.verbose ?? false);
+  return truncateResult(await webSearch(args.query));
+}
+
+async function executeEditTool(
+  rawArgs: string,
+  options: ExecuteToolOptions,
