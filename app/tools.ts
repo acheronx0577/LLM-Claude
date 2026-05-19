@@ -325,4 +325,12 @@ async function executeBashTool(
       stdout?: string;
       stderr?: string;
     };
-    const output = (execError.stdout ?? "") + (execError.stderr ?? "");
+    const output = (execError.stdout ?? "") + (execError.stderr ?? "");
+    return truncateResult(output || execError.message);
+  }
+}
+
+async function executeWebSearchTool(
+  rawArgs: string,
+  options: ExecuteToolOptions,
+): Promise<string> {
