@@ -341,4 +341,12 @@ async function executeWebSearchTool(
 
 async function executeEditTool(
   rawArgs: string,
-  options: ExecuteToolOptions,
+  options: ExecuteToolOptions,
+): Promise<string> {
+  const { planEdit } = await import("./editTools.ts");
+  const args = JSON.parse(rawArgs) as {
+    file_path: string;
+    old_string: string;
+    new_string: string;
+    replace_all?: boolean;
+  };
