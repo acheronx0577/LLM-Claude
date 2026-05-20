@@ -349,4 +349,12 @@ async function executeEditTool(
     old_string: string;
     new_string: string;
     replace_all?: boolean;
-  };
+  };
+  const filePath = resolveToolPath(args.file_path);
+  logToolUse(
+    "Edit",
+    filePath,
+    options.verbose ?? false,
+    Boolean(options.approveFileChange),
+  );
+
