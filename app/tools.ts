@@ -357,4 +357,12 @@ async function executeEditTool(
     options.verbose ?? false,
     Boolean(options.approveFileChange),
   );
-
+
+  try {
+    const plan = await planEdit({ ...args, file_path: filePath });
+    const preview = fileChangeFromEditPlan(filePath, plan);
+    const decision = await requireFileChangeApproval(preview, options);
+
+    if (decision === "decline") {
+      return "Change declined by user.";
+    }
