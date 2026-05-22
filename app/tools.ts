@@ -365,4 +365,99 @@ async function executeEditTool(
 
     if (decision === "decline") {
       return "Change declined by user.";
-    }
+    }
+
+    if (!plan.updated) {
+      return "No changes made (old_string and new_string are identical).";
+    }
+
+    await writeFile(filePath, plan.updated, "utf-8");
+    return `Applied edit to ${filePath} (+${plan.linesAdded} -${plan.linesRemoved}).`;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Edit failed";
+    return `Edit failed: ${message}`;
+  }
+}
+
+async function executeLspTool(
+  name: string,
+  rawArgs: string,
+  options: ExecuteToolOptions,
+): Promise<string> {
+  const { goToDefinition, findReferences, getDiagnostics } = await import(
+    "./lspTools.ts"
+  );
+
+  if (name === "GoToDefinition") {
+    const args = JSON.parse(rawArgs) as {
+      file_path: string;
+      line: number;
+      column: number;
+    };
+    const filePath = resolveToolPath(args.file_path);
+    logToolUse(
+      "GoToDefinition",
+      `${filePath}:${args.line}:${args.column}`,
+      options.verbose ?? false,
+    );
+    return truncateResult(
+      goToDefinition({ ...args, file_path: filePath }),
+    );
+  }
+
+  if (name === "FindReferences") {
+    const args = JSON.parse(rawArgs) as {
+      file_path: string;
+      line: number;
+      column: number;
+    };
+    const filePath = resolveToolPath(args.file_path);
+    logToolUse(
+      "FindReferences",
+      `${filePath}:${args.line}:${args.column}`,
+      options.verbose ?? false,
+    );
+    return truncateResult(
+      findReferences({ ...args, file_path: filePath }),
+    );
+  }
+
+  const args = JSON.parse(rawArgs) as { file_path?: string };
+  const detail = args.file_path
+    ? resolveToolPath(args.file_path)
+    : "project";
+  logToolUse("GetDiagnostics", detail, options.verbose ?? false);
+  return truncateResult(getDiagnostics(args.file_path));
+}
+
+const TOOL_HANDLERS: Record<string, ToolHandler> = {
+  Read: executeReadTool,
+  Write: executeWriteTool,
+  Bash: executeBashTool,
+  WebSearch: executeWebSearchTool,
+  Edit: executeEditTool,
+  GoToDefinition: (rawArgs, options) =>
+    executeLspTool("GoToDefinition", rawArgs, options),
+  FindReferences: (rawArgs, options) =>
+    executeLspTool("FindReferences", rawArgs, options),
+  GetDiagnostics: (rawArgs, options) =>
+    executeLspTool("GetDiagnostics", rawArgs, options),
+};
+
+export async function executeTool(
+  toolCall: ChatCompletionMessageToolCall & { type: "function" },
+  options: ExecuteToolOptions = {},
+): Promise<string> {
+  const { name, arguments: rawArgs } = toolCall.function;
+
+  if (options.mcp?.isMcpTool(name)) {
+    return executeMcpTool(name, rawArgs, options);
+  }
+
+  const handler = TOOL_HANDLERS[name];
+  if (!handler) {
+    throw new Error(`Unknown tool: ${name}`);
+  }
+
+  return handler(rawArgs, options);
+}
