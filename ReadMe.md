@@ -20,6 +20,8 @@ Tell it *"Refactor main.py to use a class"* — and watch it read the file, gene
 - [Local Setup](Local-Setup.md)
 - [Stage 1 — Communicate with the LLM](Stage-1-Communicate-with-LLM.md)
 - [Stage 1.1 — OpenRouter API Reference](Stage-1.1-OpenRouter-API.md)
+- [Stage 2 — Advertise the Read Tool](Stage-2-Advertise-Read-Tool.md)
+- [Stage 2.1 — Tools Reference](Stage-2.1-Tools-Reference.md)
 
 ---
 
@@ -87,7 +89,8 @@ Work through these stages in order. Each builds on the last.
 |---|-------|------------|-------------|
 | 1 | **[Communicate with the LLM](Stage-1-Communicate-with-LLM.md)** | Very easy | Send prompts and receive responses via REST API |
 | 1.1 | **[OpenRouter API Reference](Stage-1.1-OpenRouter-API.md)** | — | Endpoint, request/response, optional local/free model tips |
-| 2 | **Advertise the read tool** | Easy | Expose a `read` tool schema so the model knows it exists |
+| 2 | **[Advertise the read tool](Stage-2-Advertise-Read-Tool.md)** | Easy | Expose a `read` tool schema so the model knows it exists |
+| 2.1 | **[Tools reference](Stage-2.1-Tools-Reference.md)** | — | Tool concepts, Read schema, solution shape, tests |
 | 3 | **Execute the read tool** | Easy | Handle tool calls and return file contents to the model |
 | 4 | **Implement the agent loop** | Medium | Loop: model thinks → calls tools → observes results → repeats |
 | 5 | **Implement the write tool** | Easy | Let the agent create and modify files |
