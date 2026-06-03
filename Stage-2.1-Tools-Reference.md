@@ -1,6 +1,6 @@
 # Stage 2.1 — Tools Reference
 
-← [Back: Stage 2 — Advertise the Read Tool](Stage-2-Advertise-Read-Tool.md) · [Next: Stage 3 — Execute the Read Tool →](ReadMe.md#stages)
+← [Back: Stage 2 — Advertise the Read Tool](Stage-2-Advertise-Read-Tool.md) · [Next: Stage 3 — Execute the Read Tool →](Stage-3-Execute-Read-Tool.md)
 
 Reference for advertising tools in Stage 2. Full API docs: [OpenRouter — Tool calling](https://openrouter.ai/docs/guides/features/tool-calling)
 
@@ -121,4 +121,4 @@ The tester verifies:
 
 ---
 
-← [Back: Stage 2 — Advertise the Read Tool](Stage-2-Advertise-Read-Tool.md) · [Next: Stage 3 — Execute the Read Tool →](ReadMe.md#stages)
+← [Back: Stage 2 — Advertise the Read Tool](Stage-2-Advertise-Read-Tool.md) · [Next: Stage 3 — Execute the Read Tool →](Stage-3-Execute-Read-Tool.md)
