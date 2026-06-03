@@ -18,6 +18,8 @@ Tell it *"Refactor main.py to use a class"* — and watch it read the file, gene
 - [Advanced Features](#advanced-features-later)
 - [Getting Started](#getting-started)
 - [Local Setup](Local-Setup.md)
+- [Stage 1 — Communicate with the LLM](Stage-1-Communicate-with-LLM.md)
+- [Stage 1.1 — OpenRouter API Reference](Stage-1.1-OpenRouter-API.md)
 
 ---
 
@@ -83,7 +85,8 @@ Work through these stages in order. Each builds on the last.
 
 | # | Stage | Difficulty | What You Do |
 |---|-------|------------|-------------|
-| 1 | **Communicate with the LLM** | Very easy | Send prompts and receive responses via REST API |
+| 1 | **[Communicate with the LLM](Stage-1-Communicate-with-LLM.md)** | Very easy | Send prompts and receive responses via REST API |
+| 1.1 | **[OpenRouter API Reference](Stage-1.1-OpenRouter-API.md)** | — | Endpoint, request/response, optional local/free model tips |
 | 2 | **Advertise the read tool** | Easy | Expose a `read` tool schema so the model knows it exists |
 | 3 | **Execute the read tool** | Easy | Handle tool calls and return file contents to the model |
 | 4 | **Implement the agent loop** | Medium | Loop: model thinks → calls tools → observes results → repeats |
@@ -125,7 +128,7 @@ After the core stages, extend your assistant with:
 > **Status:** Local setup complete — Stage 1 activated.
 
 1. Complete **[Local Setup](Local-Setup.md)** (clone repo + CodeCrafters CLI)
-2. Start with **Stage 1: Communicate with the LLM**
+2. Work through **[Stage 1: Communicate with the LLM](Stage-1-Communicate-with-LLM.md)**
 3. Complete each stage before moving to the next
 4. Commit your progress as you go
 
