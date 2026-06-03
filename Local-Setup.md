@@ -1,8 +1,6 @@
 # Local Setup
 
-| ← Previous | Next → |
-|------------|--------|
-| [README](ReadMe.md) | [Stage 1](ReadMe.md#stages) |
+← [Back: README](ReadMe.md) · [Next: Stage 1 — Communicate with the LLM →](ReadMe.md#stages)
 
 **Status:** Completed
 
@@ -49,6 +47,4 @@ The first stage is now activated. Continue to **Stage 1: Communicate with the LL
 
 ---
 
-| ← Previous | Next → |
-|------------|--------|
-| [README](ReadMe.md) | [Stage 1](ReadMe.md#stages) |
+← [Back: README](ReadMe.md) · [Next: Stage 1 — Communicate with the LLM →](ReadMe.md#stages)
