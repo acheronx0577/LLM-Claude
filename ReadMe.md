@@ -31,6 +31,9 @@ Tell it *"Refactor main.py to use a class"* — and watch it read the file, gene
 - [Stage 5 — Implement the Write Tool](Stage-5-Implement-Write-Tool.md)
 - [Stage 5.1 — Write Tool Spec](Stage-5.1-Write-Tool-Spec.md)
 - [Stage 5.2 — Write Execution & Tests](Stage-5.2-Write-Execution-Tests.md)
+- [Stage 6 — Implement the Bash Tool](Stage-6-Implement-Bash-Tool.md)
+- [Stage 6.1 — Bash Tool Spec](Stage-6.1-Bash-Tool-Spec.md)
+- [Stage 6.2 — Bash Execution & Tests](Stage-6.2-Bash-Execution-Tests.md)
 
 ---
 
@@ -109,7 +112,9 @@ Work through these stages in order. Each builds on the last.
 | 5 | **[Implement the write tool](Stage-5-Implement-Write-Tool.md)** | Easy | Let the agent create and modify files |
 | 5.1 | **[Write tool spec](Stage-5.1-Write-Tool-Spec.md)** | — | Write tool JSON schema and TypeScript shape |
 | 5.2 | **[Write execution & tests](Stage-5.2-Write-Execution-Tests.md)** | — | File write flow, agent loop integration, tests |
-| 6 | **Implement the bash tool** | Easy | Let the agent run shell commands safely |
+| 6 | **[Implement the bash tool](Stage-6-Implement-Bash-Tool.md)** | Easy | Let the agent run shell commands safely |
+| 6.1 | **[Bash tool spec](Stage-6.1-Bash-Tool-Spec.md)** | — | Bash tool JSON schema and TypeScript shape |
+| 6.2 | **[Bash execution & tests](Stage-6.2-Bash-Execution-Tests.md)** | — | Shell execution, cwd rules, delete-file test |
 
 ### Architecture at a Glance
 
