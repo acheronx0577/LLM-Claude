@@ -25,6 +25,9 @@ Tell it *"Refactor main.py to use a class"* — and watch it read the file, gene
 - [Stage 3 — Execute the Read Tool](Stage-3-Execute-Read-Tool.md)
 - [Stage 3.1 — Tool Calls Response](Stage-3.1-Tool-Calls-Reference.md)
 - [Stage 3.2 — Read Execution](Stage-3.2-Read-Execution.md)
+- [Stage 4 — Implement the Agent Loop](Stage-4-Implement-Agent-Loop.md)
+- [Stage 4.1 — Agent Loop Structure](Stage-4.1-Agent-Loop-Structure.md)
+- [Stage 4.2 — Loop Behavior & Tests](Stage-4.2-Loop-Behavior-Tests.md)
 
 ---
 
@@ -97,7 +100,9 @@ Work through these stages in order. Each builds on the last.
 | 3 | **[Execute the read tool](Stage-3-Execute-Read-Tool.md)** | Easy | Handle tool calls and return file contents to the model |
 | 3.1 | **[Tool calls response](Stage-3.1-Tool-Calls-Reference.md)** | — | `tool_calls` JSON shape and key fields |
 | 3.2 | **[Read execution](Stage-3.2-Read-Execution.md)** | — | Execution flow, output rules, tests |
-| 4 | **Implement the agent loop** | Medium | Loop: model thinks → calls tools → observes results → repeats |
+| 4 | **[Implement the agent loop](Stage-4-Implement-Agent-Loop.md)** | Medium | Loop: model thinks → calls tools → observes results → repeats |
+| 4.1 | **[Agent loop structure](Stage-4.1-Agent-Loop-Structure.md)** | — | Pseudocode, message history, tool result format |
+| 4.2 | **[Loop behavior & tests](Stage-4.2-Loop-Behavior-Tests.md)** | — | stdout/stderr rules, multi-step test scenario |
 | 5 | **Implement the write tool** | Easy | Let the agent create and modify files |
 | 6 | **Implement the bash tool** | Easy | Let the agent run shell commands safely |
 
