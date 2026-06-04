@@ -1,6 +1,6 @@
 # Stage 3.2 — Read Execution
 
-← [Back: Stage 3.1 — Tool Calls Response](Stage-3.1-Tool-Calls-Reference.md) · [Next: Stage 4 — Implement the Agent Loop →](ReadMe.md#stages)
+← [Back: Stage 3.1 — Tool Calls Response](Stage-3.1-Tool-Calls-Reference.md) · [Next: Stage 4 — Implement the Agent Loop →](Stage-4-Implement-Agent-Loop.md)
 
 How to execute the Read tool and handle output in Stage 3.
 
@@ -58,4 +58,4 @@ The tester verifies:
 
 ---
 
-← [Back: Stage 3.1 — Tool Calls Response](Stage-3.1-Tool-Calls-Reference.md) · [Next: Stage 4 — Implement the Agent Loop →](ReadMe.md#stages)
+← [Back: Stage 3.1 — Tool Calls Response](Stage-3.1-Tool-Calls-Reference.md) · [Next: Stage 4 — Implement the Agent Loop →](Stage-4-Implement-Agent-Loop.md)
