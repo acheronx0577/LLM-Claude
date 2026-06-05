@@ -111,12 +111,18 @@ async function executeTool(
 
 async function main() {
   const [, , flag, prompt] = process.argv;
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  const baseURL =
-    process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1";
+  const groqApiKey = process.env.GROQ_API_KEY;
+  const openRouterApiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = groqApiKey ?? openRouterApiKey;
+  const baseURL = groqApiKey
+    ? "https://api.groq.com/openai/v1"
+    : (process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1");
+  const model = groqApiKey
+    ? (process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile")
+    : "anthropic/claude-haiku-4.5";
 
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not set");
+    throw new Error("OPENROUTER_API_KEY or GROQ_API_KEY is not set");
   }
   if (flag !== "-p" || !prompt) {
     throw new Error("error: -p flag is required");
@@ -136,7 +142,7 @@ async function main() {
 
   while (true) {
     const response = await client.chat.completions.create({
-      model: "anthropic/claude-haiku-4.5",
+      model,
       messages,
       tools,
     });
