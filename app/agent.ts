@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import type {
   ChatCompletionMessageParam,
+  ChatCompletionMessageToolCall,
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
 import { coreTools, executeTool } from "./tools.ts";
@@ -63,6 +64,22 @@ export type RunAgentOptions = {
   verbose?: boolean;
   tools?: ChatCompletionTool[];
   maxHistoryChars?: number;
+  onAssistantText?: (text: string) => Promise<void>;
+  onToolStart?: (toolCall: {
+    id: string;
+    name: string;
+    rawArgs: string;
+  }) => Promise<void>;
+  onToolComplete?: (toolCall: {
+    id: string;
+    name: string;
+    rawArgs: string;
+    result: string;
+  }) => Promise<void>;
+  executeToolOverride?: (
+    toolCall: ChatCompletionMessageToolCall & { type: "function" },
+  ) => Promise<string>;
+  signal?: AbortSignal;
 };
 
 export async function runAgent(
@@ -76,6 +93,10 @@ export async function runAgent(
   let temperature = 0.2;
 
   while (true) {
+    if (options.signal?.aborted) {
+      throw new Error("cancelled");
+    }
+
     let response;
 
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -110,6 +131,10 @@ export async function runAgent(
     const message = response!.choices[0].message;
     messages.push(message);
 
+    if (message.content && options.onAssistantText) {
+      await options.onAssistantText(message.content);
+    }
+
     if (!message.tool_calls || message.tool_calls.length === 0) {
       return message.content ?? "";
     }
@@ -119,7 +144,27 @@ export async function runAgent(
         throw new Error(`Unsupported tool call type: ${toolCall.type}`);
       }
 
-      const result = await executeTool(toolCall, options);
+      if (options.onToolStart) {
+        await options.onToolStart({
+          id: toolCall.id,
+          name: toolCall.function.name,
+          rawArgs: toolCall.function.arguments,
+        });
+      }
+
+      const result = options.executeToolOverride
+        ? await options.executeToolOverride(toolCall)
+        : await executeTool(toolCall, options);
+
+      if (options.onToolComplete) {
+        await options.onToolComplete({
+          id: toolCall.id,
+          name: toolCall.function.name,
+          rawArgs: toolCall.function.arguments,
+          result,
+        });
+      }
+
       messages.push({
         role: "tool",
         tool_call_id: toolCall.id,
