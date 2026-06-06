@@ -1,6 +1,11 @@
 import OpenAI from "openai";
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { executeTool, tools } from "./tools.ts";
+import type {
+  ChatCompletionMessageParam,
+  ChatCompletionTool,
+} from "openai/resources/chat/completions";
+import { coreTools, executeTool } from "./tools.ts";
+
+const DEFAULT_MAX_HISTORY_CHARS = 48_000;
 
 function isToolUseFailed(error: unknown): boolean {
   return (
@@ -11,10 +16,38 @@ function isToolUseFailed(error: unknown): boolean {
   );
 }
 
+function estimateMessageChars(messages: ChatCompletionMessageParam[]): number {
+  return JSON.stringify(messages).length;
+}
+
+/** Drop oldest user turns when history exceeds the char budget. */
+export function trimMessages(
+  messages: ChatCompletionMessageParam[],
+  maxChars = DEFAULT_MAX_HISTORY_CHARS,
+): ChatCompletionMessageParam[] {
+  let trimmed = [...messages];
+
+  while (estimateMessageChars(trimmed) > maxChars && trimmed.length > 1) {
+    const nextUserIndex = trimmed.findIndex(
+      (message, index) => index > 0 && message.role === "user",
+    );
+
+    if (nextUserIndex === -1) {
+      trimmed = trimmed.slice(1);
+      continue;
+    }
+
+    trimmed = trimmed.slice(nextUserIndex);
+  }
+
+  return trimmed;
+}
+
 async function createChatCompletion(
   client: OpenAI,
   model: string,
   messages: ChatCompletionMessageParam[],
+  tools: ChatCompletionTool[],
   temperature: number,
 ) {
   return client.chat.completions.create({
@@ -26,12 +59,20 @@ async function createChatCompletion(
   });
 }
 
+export type RunAgentOptions = {
+  verbose?: boolean;
+  tools?: ChatCompletionTool[];
+  maxHistoryChars?: number;
+};
+
 export async function runAgent(
   client: OpenAI,
   model: string,
   messages: ChatCompletionMessageParam[],
-  options: { verbose?: boolean } = {},
+  options: RunAgentOptions = {},
 ): Promise<string> {
+  const activeTools = options.tools ?? coreTools;
+  const maxHistoryChars = options.maxHistoryChars ?? DEFAULT_MAX_HISTORY_CHARS;
   let temperature = 0.2;
 
   while (true) {
@@ -39,10 +80,12 @@ export async function runAgent(
 
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
+        const requestMessages = trimMessages(messages, maxHistoryChars);
         response = await createChatCompletion(
           client,
           model,
-          messages,
+          requestMessages,
+          activeTools,
           temperature,
         );
         break;
