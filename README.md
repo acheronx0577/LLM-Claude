@@ -2,7 +2,15 @@
 
 # LLM Claude — TypeScript Implementation
 
-A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code). Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, and Bash tools (CodeCrafters). Interactive chat adds WebSearch and TypeScript LSP tools.
+A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code). Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, and Bash tools (CodeCrafters). Local modes add chat, web search, TypeScript LSP tools, and ACP editor integration.
+
+## Run modes
+
+| Mode | Command | Tools |
+|------|---------|-------|
+| CodeCrafters submit | `.\run.ps1 -p "prompt"` | Read, Write, Bash |
+| Interactive chat | `.\run.ps1` or `npm run chat` | All 7 tools |
+| ACP server | `npm run acp` or `.\run.ps1 -Acp` | Read, Write, Bash via editor |
 
 ## Documentation
 
@@ -27,6 +35,8 @@ Full challenge guide, stage walkthroughs, and setup notes live in **[docs/ReadMe
 | FindReferences | Find all usages of a symbol (TypeScript) | Chat only |
 | GetDiagnostics | TypeScript errors and warnings | Chat only |
 
+**ACP mode** (`--acp`): speak the [Agent Client Protocol](https://agentclientprotocol.com) over stdio so editors like Zed can drive the agent. Uses the client's file system and terminal APIs for Read, Write, and Bash.
+
 Optional search APIs in `.env`: `TAVILY_API_KEY`, `BRAVE_SEARCH_API_KEY`.
 
 ## Quick start
@@ -41,6 +51,10 @@ copy .env.example .env
 
 # Single prompt (CodeCrafters mode)
 .\run.ps1 "Hello"
+
+# ACP server (for Zed and other ACP clients)
+npm run acp
+# or: .\run.ps1 -Acp
 ```
 
 Submit to CodeCrafters:
@@ -67,6 +81,7 @@ app/
   lspTools.ts   # TypeScript definition, references, diagnostics
   webSearch.ts  # Web search providers
   chat.ts       # Interactive REPL
+  acp.ts        # Agent Client Protocol server
   config.ts     # API key and model config
 docs/           # Challenge documentation
 run.ps1         # Windows runner (works without bun on PATH)
@@ -79,6 +94,7 @@ Chat mode trims older turns when history exceeds ~48k characters to reduce Groq 
 
 ```powershell
 npm run chat      # Interactive session
+npm run acp       # ACP server on stdio
 npm run typecheck # TypeScript check
 codecrafters submit
 ```
