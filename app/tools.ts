@@ -169,12 +169,16 @@ export const chatTools: ChatCompletionTool[] = [
   getDiagnosticsTool,
 ];
 
-function truncateResult(content: string): string {
+export function truncateToolResult(content: string): string {
   if (content.length <= MAX_TOOL_RESULT_CHARS) {
     return content;
   }
 
   return `${content.slice(0, MAX_TOOL_RESULT_CHARS)}\n\n[Output truncated]`;
+}
+
+function truncateResult(content: string): string {
+  return truncateToolResult(content);
 }
 
 function logToolUse(name: string, detail: string, verbose: boolean): void {
