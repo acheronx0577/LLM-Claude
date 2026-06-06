@@ -51,7 +51,13 @@ export async function runInteractiveChat(config: ApiConfig): Promise<void> {
         } else {
           const message =
             error instanceof Error ? error.message : "Unknown error";
-          console.error(`\nError: ${message}\n`);
+          if (message.includes("413") || message.includes("tokens")) {
+            console.error(
+              "\nToken limit exceeded. Try a shorter message or start a fresh chat session.\n",
+            );
+          } else {
+            console.error(`\nError: ${message}\n`);
+          }
         }
       }
     }
