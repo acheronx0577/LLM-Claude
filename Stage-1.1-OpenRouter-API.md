@@ -1,6 +1,6 @@
 # Stage 1.1 — OpenRouter API Reference
 
-← [Back: Stage 1 — Communicate with the LLM](Stage-1-Communicate-with-LLM.md) · [Next: Stage 2 — Advertise the Read Tool →](ReadMe.md#stages)
+← [Back: Stage 1 — Communicate with the LLM](Stage-1-Communicate-with-LLM.md) · [Next: Stage 2 — Advertise the Read Tool →](Stage-2-Advertise-Read-Tool.md)
 
 Reference for the API used in Stage 1. Official docs: [OpenRouter Chat Completions](https://openrouter.ai/docs/api/api-reference/chat/send-chat-completion-request)
 
@@ -105,4 +105,4 @@ const model = process.env.LOCAL_MODEL ?? "anthropic/claude-haiku-4.5";
 
 ---
 
-← [Back: Stage 1 — Communicate with the LLM](Stage-1-Communicate-with-LLM.md) · [Next: Stage 2 — Advertise the Read Tool →](ReadMe.md#stages)
+← [Back: Stage 1 — Communicate with the LLM](Stage-1-Communicate-with-LLM.md) · [Next: Stage 2 — Advertise the Read Tool →](Stage-2-Advertise-Read-Tool.md)
