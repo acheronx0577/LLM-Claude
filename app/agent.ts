@@ -6,6 +6,7 @@ import type {
 } from "openai/resources/chat/completions";
 import { coreTools, executeTool, type ExecuteToolOptions } from "./tools.ts";
 import type { FileChangeDecision, FileChangeRequest } from "./editApproval.ts";
+import type { McpSession } from "./mcp.ts";
 
 const DEFAULT_MAX_HISTORY_CHARS = 48_000;
 
@@ -83,6 +84,7 @@ export type RunAgentOptions = {
   approveFileChange?: (
     request: FileChangeRequest,
   ) => Promise<FileChangeDecision>;
+  mcp?: McpSession | null;
   signal?: AbortSignal;
 };
 
@@ -161,6 +163,7 @@ export async function runAgent(
         : await executeTool(toolCall, {
             verbose: options.verbose,
             approveFileChange: options.approveFileChange,
+            mcp: options.mcp,
           } satisfies ExecuteToolOptions);
 
       if (options.onToolComplete) {
