@@ -6,6 +6,11 @@ import type {
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
 import { webSearch } from "./webSearch.ts";
+import type { FileChangeDecision, FileChangeRequest } from "./editApproval.ts";
+import {
+  buildWritePreview,
+  fileChangeFromEditPlan,
+} from "./editApproval.ts";
 
 const execAsync = promisify(exec);
 const MAX_TOOL_RESULT_CHARS = 10_000;
@@ -157,12 +162,46 @@ const getDiagnosticsTool: ChatCompletionTool = {
   },
 };
 
+const editTool: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: "Edit",
+    description:
+      "Replace a unique string in an existing file without rewriting the whole file. Read the file first and copy exact text into old_string.",
+    parameters: {
+      type: "object",
+      required: ["file_path", "old_string", "new_string"],
+      properties: {
+        file_path: {
+          type: "string",
+          description: "Path to the file to edit",
+        },
+        old_string: {
+          type: "string",
+          description:
+            "Exact text to find in the file (must match once unless replace_all is true)",
+        },
+        new_string: {
+          type: "string",
+          description: "Text to replace old_string with",
+        },
+        replace_all: {
+          type: "boolean",
+          description:
+            "Replace every occurrence of old_string. Default false (requires a unique match).",
+        },
+      },
+    },
+  },
+};
+
 /** CodeCrafters submit — Read, Write, Bash only (smaller API payload). */
 export const coreTools: ChatCompletionTool[] = [readTool, writeTool, bashTool];
 
 /** Interactive chat — core tools plus local extras. */
 export const chatTools: ChatCompletionTool[] = [
   ...coreTools,
+  editTool,
   webSearchTool,
   goToDefinitionTool,
   findReferencesTool,
@@ -181,17 +220,40 @@ function truncateResult(content: string): string {
   return truncateToolResult(content);
 }
 
-function logToolUse(name: string, detail: string, verbose: boolean): void {
+function logToolUse(
+  name: string,
+  detail: string,
+  verbose: boolean,
+  hideDetail = false,
+): void {
   if (!verbose) {
     return;
   }
 
-  console.error(`→ ${name}(${detail})`);
+  console.error(`→ ${name}(${hideDetail ? "proposed" : detail})`);
+}
+
+export type ExecuteToolOptions = {
+  verbose?: boolean;
+  approveFileChange?: (
+    request: FileChangeRequest,
+  ) => Promise<FileChangeDecision>;
+};
+
+async function requireFileChangeApproval(
+  request: FileChangeRequest,
+  options: ExecuteToolOptions,
+): Promise<FileChangeDecision | "accept"> {
+  if (!options.approveFileChange) {
+    return "accept";
+  }
+
+  return options.approveFileChange(request);
 }
 
 export async function executeTool(
   toolCall: ChatCompletionMessageToolCall & { type: "function" },
-  options: { verbose?: boolean } = {},
+  options: ExecuteToolOptions = {},
 ): Promise<string> {
   const verbose = options.verbose ?? false;
   const { name, arguments: rawArgs } = toolCall.function;
@@ -207,7 +269,15 @@ export async function executeTool(
       file_path: string;
       content: string;
     };
-    logToolUse("Write", args.file_path, verbose);
+    logToolUse("Write", args.file_path, verbose, Boolean(options.approveFileChange));
+
+    const preview = await buildWritePreview(args.file_path, args.content);
+    const decision = await requireFileChangeApproval(preview, options);
+
+    if (decision === "decline") {
+      return "Change declined by user.";
+    }
+
     await writeFile(args.file_path, args.content, "utf-8");
     return "File written successfully";
   }
@@ -235,6 +305,37 @@ export async function executeTool(
     const args = JSON.parse(rawArgs) as { query: string };
     logToolUse("WebSearch", `"${args.query}"`, verbose);
     return truncateResult(await webSearch(args.query));
+  }
+
+  if (name === "Edit") {
+    const { planEdit } = await import("./editTools.ts");
+    const args = JSON.parse(rawArgs) as {
+      file_path: string;
+      old_string: string;
+      new_string: string;
+      replace_all?: boolean;
+    };
+    logToolUse("Edit", args.file_path, verbose, Boolean(options.approveFileChange));
+
+    try {
+      const plan = await planEdit(args);
+      const preview = fileChangeFromEditPlan(args.file_path, plan);
+      const decision = await requireFileChangeApproval(preview, options);
+
+      if (decision === "decline") {
+        return "Change declined by user.";
+      }
+
+      if (!plan.updated) {
+        return "No changes made (old_string and new_string are identical).";
+      }
+
+      await writeFile(args.file_path, plan.updated, "utf-8");
+      return `Applied edit to ${args.file_path} (+${plan.linesAdded} -${plan.linesRemoved}).`;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Edit failed";
+      return `Edit failed: ${message}`;
+    }
   }
 
   if (
