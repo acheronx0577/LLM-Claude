@@ -1,6 +1,6 @@
 [![progress-banner](https://backend.codecrafters.io/progress/claude-code/4ffc826f-4881-4e99-8d06-736a8109abb1)](https://app.codecrafters.io/users/acheronx0577?r=2qF)
 
-![Interactive TUI demo](docs/Pics/animated_720P.gif)
+![Interactive TUI demo](docs/Pics/animated_1080P.gif)
 
 # LLM Claude — TypeScript Implementation
 

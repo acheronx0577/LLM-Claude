@@ -17,53 +17,15 @@ function buildSprite(eyeLeft: string, eyeRight: string): string[] {
   );
 }
 
-function framesFromEyes(
-  eyes: ReadonlyArray<readonly [string, string]>,
-): string[][] {
-  return eyes.map(([left, right]) => buildSprite(left, right));
-}
+const IDLE_OPEN = buildSprite("ﾟ", "｡");
+const IDLE_BLINK = buildSprite("-", "-");
+const ERROR_FACE = buildSprite("×", "×");
 
-const IDLE_FRAMES = framesFromEyes([
-  ["ﾟ", "｡"],
-  ["-", "-"],
-]);
-
-const THINKING_FRAMES = framesFromEyes([
-  ["◔", "◑"],
-  ["◑", "◔"],
-  ["ﾟ", "｡"],
-]);
-
-const TOOL_FRAMES = framesFromEyes([
-  ["O", "O"],
-  ["ﾟ", "｡"],
-]);
-
-const FRAME_HOLDS: Record<MascotMode, number[]> = {
-  idle: [18, 2],
-  thinking: [6, 6, 6],
-  tool: [5, 5],
-  error: [1],
-};
+const IDLE_FRAMES = [IDLE_OPEN, IDLE_BLINK];
+const IDLE_HOLDS = [18, 2];
 
 function centerX(stageWidth: number): number {
   return Math.max(0, Math.floor(stageWidth / 2) - Math.ceil(SPRITE_DISPLAY_WIDTH / 2));
-}
-
-function framesForMode(mode: MascotMode): string[][] {
-  if (mode === "idle") {
-    return IDLE_FRAMES;
-  }
-
-  if (mode === "thinking") {
-    return THINKING_FRAMES;
-  }
-
-  if (mode === "tool") {
-    return TOOL_FRAMES;
-  }
-
-  return [buildSprite("×", "×")];
 }
 
 export class Mascot {
@@ -84,9 +46,11 @@ export class Mascot {
   tick(stageWidth: number): void {
     this.x = centerX(stageWidth);
 
-    const frames = framesForMode(this.mode);
-    const holds = FRAME_HOLDS[this.mode];
-    const hold = holds[this.frame % holds.length] ?? 1;
+    if (this.mode !== "idle") {
+      return;
+    }
+
+    const hold = IDLE_HOLDS[this.frame % IDLE_HOLDS.length] ?? 1;
 
     this.holdTicks++;
     if (this.holdTicks < hold) {
@@ -94,12 +58,19 @@ export class Mascot {
     }
 
     this.holdTicks = 0;
-    this.frame = (this.frame + 1) % frames.length;
+    this.frame = (this.frame + 1) % IDLE_FRAMES.length;
   }
 
   getSpriteLines(): string[] {
-    const frames = framesForMode(this.mode);
-    return frames[this.frame % frames.length] ?? frames[0]!;
+    if (this.mode === "error") {
+      return ERROR_FACE;
+    }
+
+    if (this.mode !== "idle") {
+      return IDLE_OPEN;
+    }
+
+    return IDLE_FRAMES[this.frame % IDLE_FRAMES.length] ?? IDLE_OPEN;
   }
 
   getShakeOffset(): number {
