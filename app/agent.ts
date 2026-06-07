@@ -4,7 +4,8 @@ import type {
   ChatCompletionMessageToolCall,
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
-import { coreTools, executeTool } from "./tools.ts";
+import { coreTools, executeTool, type ExecuteToolOptions } from "./tools.ts";
+import type { FileChangeDecision, FileChangeRequest } from "./editApproval.ts";
 
 const DEFAULT_MAX_HISTORY_CHARS = 48_000;
 
@@ -79,6 +80,9 @@ export type RunAgentOptions = {
   executeToolOverride?: (
     toolCall: ChatCompletionMessageToolCall & { type: "function" },
   ) => Promise<string>;
+  approveFileChange?: (
+    request: FileChangeRequest,
+  ) => Promise<FileChangeDecision>;
   signal?: AbortSignal;
 };
 
@@ -154,7 +158,10 @@ export async function runAgent(
 
       const result = options.executeToolOverride
         ? await options.executeToolOverride(toolCall)
-        : await executeTool(toolCall, options);
+        : await executeTool(toolCall, {
+            verbose: options.verbose,
+            approveFileChange: options.approveFileChange,
+          } satisfies ExecuteToolOptions);
 
       if (options.onToolComplete) {
         await options.onToolComplete({
