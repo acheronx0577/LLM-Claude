@@ -2,14 +2,14 @@
 
 # LLM Claude — TypeScript Implementation
 
-A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code). Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, and Bash tools (CodeCrafters). Local modes add chat, web search, TypeScript LSP tools, and ACP editor integration.
+A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code), featuring ACP editor integration and TypeScript LSP tools. Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, and Bash tools (CodeCrafters).
 
 ## Run modes
 
 | Mode | Command | Tools |
 |------|---------|-------|
 | CodeCrafters submit | `.\run.ps1 -p "prompt"` | Read, Write, Bash |
-| Interactive chat | `.\run.ps1` or `npm run chat` | All 7 tools |
+| Interactive chat | `.\run.ps1` or `npm run chat` | All 8 tools + edit review |
 | ACP server | `npm run acp` or `.\run.ps1 -Acp` | Read, Write, Bash via editor |
 
 ## Documentation
@@ -29,6 +29,7 @@ Full challenge guide, stage walkthroughs, and setup notes live in **[docs/ReadMe
 |------|---------|------|
 | Read | Read file contents | Submit + chat |
 | Write | Create or overwrite files | Submit + chat |
+| Edit | Replace a unique string in an existing file | Chat only |
 | Bash | Run shell commands in the project directory | Submit + chat |
 | WebSearch | Search the web (DuckDuckGo by default) | Chat only |
 | GoToDefinition | Jump to symbol definition (TypeScript) | Chat only |
@@ -78,6 +79,8 @@ app/
   main.ts       # Entry point (-p submit, -i chat)
   agent.ts      # Agent loop and history trimming
   tools.ts      # Tool specs and execution
+  editTools.ts  # Partial file edits (string replace)
+  editApproval.ts # Review / Accept all / Decline prompts in chat
   lspTools.ts   # TypeScript definition, references, diagnostics
   webSearch.ts  # Web search providers
   chat.ts       # Interactive REPL
@@ -88,7 +91,7 @@ run.ps1         # Windows runner (works without bun on PATH)
 your_program.sh # Unix runner
 ```
 
-Chat mode trims older turns when history exceeds ~48k characters to reduce Groq token-limit errors.
+Chat mode trims older turns when history exceeds ~48k characters to reduce Groq token-limit errors. **Write** and **Edit** prompt for approval first (`[r]` Review to see `+/-` stats and jump to `file:line`, then `[y]`/`[a]`/`[d]`).
 
 ## Scripts
 
