@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import OpenAI from "openai";
 
 async function main() {
@@ -49,8 +50,27 @@ async function main() {
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error("Logs from your program will appear here!");
 
-  // TODO: Uncomment the lines below to pass the first stage
-  console.log(response.choices[0].message.content);
+  const message = response.choices[0].message;
+
+  if (message.tool_calls && message.tool_calls.length > 0) {
+    const toolCall = message.tool_calls[0];
+    if (toolCall.type !== "function") {
+      throw new Error(`Unsupported tool call type: ${toolCall.type}`);
+    }
+
+    const args = JSON.parse(toolCall.function.arguments) as {
+      file_path: string;
+    };
+
+    if (toolCall.function.name === "Read") {
+      const contents = await readFile(args.file_path, "utf-8");
+      process.stdout.write(contents);
+    } else {
+      throw new Error(`Unknown tool: ${toolCall.function.name}`);
+    }
+  } else {
+    console.log(message.content);
+  }
 }
 
 main();
