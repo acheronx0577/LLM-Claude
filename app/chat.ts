@@ -1,9 +1,9 @@
 import * as readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import type OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { isAgentToolError, runAgent } from "./agent.ts";
 import type { ApiConfig } from "./config.ts";
+import { chatTools } from "./tools.ts";
 
 const EXIT_COMMANDS = new Set(["exit", "quit", "/exit", "/quit", "q"]);
 
@@ -24,7 +24,7 @@ export async function runInteractiveChat(config: ApiConfig): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
   console.error("LLM Claude chat");
-  console.error("Tools: Read, Write, Bash, WebSearch");
+  console.error("Tools: Read, Write, Bash, WebSearch, GoToDefinition, FindReferences, GetDiagnostics");
   console.error("Type exit to quit.\n");
 
   try {
@@ -40,6 +40,7 @@ export async function runInteractiveChat(config: ApiConfig): Promise<void> {
       try {
         const reply = await runAgent(config.client, config.model, messages, {
           verbose: true,
+          tools: chatTools,
         });
         console.log(`\nAssistant: ${reply}\n`);
       } catch (error) {

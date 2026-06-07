@@ -2,7 +2,7 @@
 
 # LLM Claude — TypeScript Implementation
 
-A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code). Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, Bash, and WebSearch tools.
+A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code). Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, and Bash tools (CodeCrafters). Interactive chat adds WebSearch and TypeScript LSP tools.
 
 ## Documentation
 
@@ -17,12 +17,15 @@ Full challenge guide, stage walkthroughs, and setup notes live in **[docs/ReadMe
 
 ## Tools
 
-| Tool | Purpose |
-|------|---------|
-| Read | Read file contents |
-| Write | Create or overwrite files |
-| Bash | Run shell commands in the project directory |
-| WebSearch | Search the web (DuckDuckGo by default) |
+| Tool | Purpose | Mode |
+|------|---------|------|
+| Read | Read file contents | Submit + chat |
+| Write | Create or overwrite files | Submit + chat |
+| Bash | Run shell commands in the project directory | Submit + chat |
+| WebSearch | Search the web (DuckDuckGo by default) | Chat only |
+| GoToDefinition | Jump to symbol definition (TypeScript) | Chat only |
+| FindReferences | Find all usages of a symbol (TypeScript) | Chat only |
+| GetDiagnostics | TypeScript errors and warnings | Chat only |
 
 Optional search APIs in `.env`: `TAVILY_API_KEY`, `BRAVE_SEARCH_API_KEY`.
 
@@ -58,9 +61,10 @@ codecrafters submit
 
 ```
 app/
-  main.ts       # Entry point
-  agent.ts      # Agent loop
-  tools.ts      # Tool definitions and execution
+  main.ts       # Entry point (-p submit, -i chat)
+  agent.ts      # Agent loop and history trimming
+  tools.ts      # Tool specs and execution
+  lspTools.ts   # TypeScript definition, references, diagnostics
   webSearch.ts  # Web search providers
   chat.ts       # Interactive REPL
   config.ts     # API key and model config
@@ -68,6 +72,8 @@ docs/           # Challenge documentation
 run.ps1         # Windows runner (works without bun on PATH)
 your_program.sh # Unix runner
 ```
+
+Chat mode trims older turns when history exceeds ~48k characters to reduce Groq token-limit errors.
 
 ## Scripts
 

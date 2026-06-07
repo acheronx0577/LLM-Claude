@@ -9,11 +9,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "openai": "^6.16.0"
+    "openai": "^6.16.0",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^25.9.2",
-    "typescript": "^6.0.3"
+    "@types/node": "^25.9.2"
   }
 }
