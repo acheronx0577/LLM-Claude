@@ -1,6 +1,6 @@
 # Stage 5.2 — Write Execution & Tests
 
-← [Back: Stage 5.1 — Write Tool Spec](Stage-5.1-Write-Tool-Spec.md) · [Next: Stage 6 — Implement the Bash Tool →](ReadMe.md#stages)
+← [Back: Stage 5.1 — Write Tool Spec](Stage-5.1-Write-Tool-Spec.md) · [Next: Stage 6 — Implement the Bash Tool →](Stage-6-Implement-Bash-Tool.md)
 
 How to execute Write tool calls inside the agent loop.
 
@@ -65,4 +65,4 @@ This requires the agent to Read the README, Write the new file, then reply with 
 
 ---
 
-← [Back: Stage 5.1 — Write Tool Spec](Stage-5.1-Write-Tool-Spec.md) · [Next: Stage 6 — Implement the Bash Tool →](ReadMe.md#stages)
+← [Back: Stage 5.1 — Write Tool Spec](Stage-5.1-Write-Tool-Spec.md) · [Next: Stage 6 — Implement the Bash Tool →](Stage-6-Implement-Bash-Tool.md)
