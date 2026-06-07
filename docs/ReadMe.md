@@ -133,16 +133,18 @@ User prompt
 
 ---
 
-## Advanced Features (Later)
+## Advanced Features
 
-After the core stages, extend your assistant with:
+Local extensions beyond the CodeCrafters core stages:
 
-- **Interactive mode** — REPL-style conversational sessions
-- **ACP support** — Agent Client Protocol integration
-- **LSP servers** — richer code intelligence (symbols, refs, diagnostics)
-- **MCP** — plug in external tools and data sources
-- **TUI** — polished terminal user interface
-- **Web search** — fetch live information from the web
+| Feature | Status | How to use |
+|---------|--------|------------|
+| Interactive chat | Done | `npm run chat` or `.\run.ps1` |
+| Web search | Done | Chat mode; optional `TAVILY_API_KEY` |
+| LSP tools | Done | Chat mode — GoToDefinition, FindReferences, GetDiagnostics |
+| ACP | Done | `npm run acp` or `bun run app/main.ts --acp` |
+| MCP | Planned | Plug in external tools and data sources |
+| TUI | Planned | Polished terminal user interface |
 
 ---
 

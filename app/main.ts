@@ -1,9 +1,16 @@
+import { runAcpServer } from "./acp.ts";
 import { runAgent } from "./agent.ts";
 import { runInteractiveChat, parseArgs } from "./chat.ts";
 import { loadApiConfig } from "./config.ts";
 
 async function main() {
   const args = process.argv.slice(2);
+
+  if (args.includes("--acp")) {
+    runAcpServer(loadApiConfig());
+    return;
+  }
+
   const { interactive, prompt } = parseArgs(args);
   const config = loadApiConfig();
 
@@ -24,4 +31,8 @@ async function main() {
   console.log(await runAgent(config.client, config.model, messages));
 }
 
-main();
+main().catch((error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(message);
+  process.exit(1);
+});
