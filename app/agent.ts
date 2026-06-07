@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import type {
+  ChatCompletionMessage,
   ChatCompletionMessageParam,
   ChatCompletionMessageToolCall,
   ChatCompletionTool,
@@ -46,6 +47,38 @@ export function trimMessages(
   return trimmed;
 }
 
+type StoredAssistantMessage = Extract<
+  ChatCompletionMessageParam,
+  { role: "assistant" }
+>;
+
+function normalizeAssistantMessage(
+  message: ChatCompletionMessage,
+): StoredAssistantMessage {
+  const normalized: StoredAssistantMessage = {
+    role: "assistant",
+    content: message.content ?? null,
+  };
+
+  if (message.tool_calls && message.tool_calls.length > 0) {
+    normalized.tool_calls = message.tool_calls;
+  }
+
+  return normalized;
+}
+
+function sanitizeMessagesForRequest(
+  messages: ChatCompletionMessageParam[],
+): ChatCompletionMessageParam[] {
+  return messages.map((message) => {
+    if (message.role !== "assistant") {
+      return message;
+    }
+
+    return normalizeAssistantMessage(message as ChatCompletionMessage);
+  });
+}
+
 async function createChatCompletion(
   client: OpenAI,
   model: string,
@@ -55,11 +88,100 @@ async function createChatCompletion(
 ) {
   return client.chat.completions.create({
     model,
-    messages,
+    messages: sanitizeMessagesForRequest(messages),
     tools,
     tool_choice: "auto",
     temperature,
   });
+}
+
+function mergeToolCallDelta(
+  toolCalls: (ChatCompletionMessageToolCall & { type: "function" })[],
+  delta: {
+    index?: number;
+    id?: string;
+    function?: { name?: string; arguments?: string };
+  },
+): void {
+  const index = delta.index ?? 0;
+
+  if (!toolCalls[index]) {
+    toolCalls[index] = {
+      id: delta.id ?? "",
+      type: "function",
+      function: {
+        name: delta.function?.name ?? "",
+        arguments: delta.function?.arguments ?? "",
+      },
+    };
+    return;
+  }
+
+  const current = toolCalls[index]!;
+
+  if (delta.id) {
+    current.id = delta.id;
+  }
+
+  if (delta.function?.name) {
+    current.function.name += delta.function.name;
+  }
+
+  if (delta.function?.arguments) {
+    current.function.arguments += delta.function.arguments;
+  }
+}
+
+async function streamChatCompletion(
+  client: OpenAI,
+  model: string,
+  messages: ChatCompletionMessageParam[],
+  tools: ChatCompletionTool[],
+  temperature: number,
+  onDelta: (delta: string) => Promise<void>,
+  signal?: AbortSignal,
+): Promise<StoredAssistantMessage> {
+  const stream = await client.chat.completions.create({
+    model,
+    messages: sanitizeMessagesForRequest(messages),
+    tools,
+    tool_choice: "auto",
+    temperature,
+    stream: true,
+  });
+
+  let content = "";
+  const toolCalls: (ChatCompletionMessageToolCall & { type: "function" })[] =
+    [];
+
+  for await (const chunk of stream) {
+    if (signal?.aborted) {
+      throw new Error("cancelled");
+    }
+
+    const delta = chunk.choices[0]?.delta;
+
+    if (!delta) {
+      continue;
+    }
+
+    if (delta.content) {
+      content += delta.content;
+      await onDelta(delta.content);
+    }
+
+    if (delta.tool_calls) {
+      for (const toolCallDelta of delta.tool_calls) {
+        mergeToolCallDelta(toolCalls, toolCallDelta);
+      }
+    }
+  }
+
+  return normalizeAssistantMessage({
+    role: "assistant",
+    content: content || null,
+    tool_calls: toolCalls.length > 0 ? toolCalls : undefined,
+  } as ChatCompletionMessage);
 }
 
 export type RunAgentOptions = {
@@ -67,6 +189,9 @@ export type RunAgentOptions = {
   tools?: ChatCompletionTool[];
   maxHistoryChars?: number;
   onAssistantText?: (text: string) => Promise<void>;
+  onAssistantTextDelta?: (delta: string) => Promise<void>;
+  onAssistantStreamStart?: () => Promise<void>;
+  onAssistantStreamEnd?: () => Promise<void>;
   onToolStart?: (toolCall: {
     id: string;
     name: string;
@@ -103,18 +228,46 @@ export async function runAgent(
       throw new Error("cancelled");
     }
 
-    let response;
+    let message: StoredAssistantMessage | undefined;
+    const requestMessages = trimMessages(messages, maxHistoryChars);
+    const useStreaming = Boolean(options.onAssistantTextDelta);
+    let streamed = false;
 
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const requestMessages = trimMessages(messages, maxHistoryChars);
-        response = await createChatCompletion(
-          client,
-          model,
-          requestMessages,
-          activeTools,
-          temperature,
-        );
+        if (useStreaming) {
+          message = await streamChatCompletion(
+            client,
+            model,
+            requestMessages,
+            activeTools,
+            temperature,
+            async (delta) => {
+              if (options.signal?.aborted) {
+                throw new Error("cancelled");
+              }
+
+              streamed = true;
+              await options.onAssistantTextDelta!(delta);
+            },
+            options.signal,
+          );
+        } else {
+          const response = await createChatCompletion(
+            client,
+            model,
+            requestMessages,
+            activeTools,
+            temperature,
+          );
+
+          if (!response.choices || response.choices.length === 0) {
+            throw new Error("no choices in response");
+          }
+
+          message = normalizeAssistantMessage(response.choices[0].message);
+        }
+
         break;
       } catch (error) {
         if (isToolUseFailed(error) && attempt < 2) {
@@ -130,22 +283,42 @@ export async function runAgent(
       }
     }
 
-    if (!response!.choices || response!.choices.length === 0) {
-      throw new Error("no choices in response");
+    if (!message) {
+      throw new Error("failed to get model response");
     }
 
-    const message = response!.choices[0].message;
     messages.push(message);
 
-    if (message.content && options.onAssistantText) {
+    if (
+      typeof message.content === "string" &&
+      message.content &&
+      options.onAssistantText &&
+      (!useStreaming || !streamed)
+    ) {
+      if (options.signal?.aborted) {
+        throw new Error("cancelled");
+      }
+
       await options.onAssistantText(message.content);
     }
 
+    if (useStreaming) {
+      if (options.signal?.aborted) {
+        throw new Error("cancelled");
+      }
+
+      await options.onAssistantStreamEnd?.();
+    }
+
     if (!message.tool_calls || message.tool_calls.length === 0) {
-      return message.content ?? "";
+      return typeof message.content === "string" ? message.content : "";
     }
 
     for (const toolCall of message.tool_calls) {
+      if (options.signal?.aborted) {
+        throw new Error("cancelled");
+      }
+
       if (toolCall.type !== "function") {
         throw new Error(`Unsupported tool call type: ${toolCall.type}`);
       }
