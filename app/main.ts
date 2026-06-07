@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import OpenAI from "openai";
 import type {
   ChatCompletionMessageParam,
@@ -23,17 +23,46 @@ const tools = [
       },
     },
   },
+  {
+    type: "function" as const,
+    function: {
+      name: "Write",
+      description: "Write content to a file",
+      parameters: {
+        type: "object",
+        required: ["file_path", "content"],
+        properties: {
+          file_path: {
+            type: "string",
+            description: "The path of the file to write to",
+          },
+          content: {
+            type: "string",
+            description: "The content to write to the file",
+          },
+        },
+      },
+    },
+  },
 ];
 
 async function executeTool(
   toolCall: ChatCompletionMessageToolCall & { type: "function" },
 ): Promise<string> {
-  const args = JSON.parse(toolCall.function.arguments) as {
-    file_path: string;
-  };
-
   if (toolCall.function.name === "Read") {
+    const args = JSON.parse(toolCall.function.arguments) as {
+      file_path: string;
+    };
     return readFile(args.file_path, "utf-8");
+  }
+
+  if (toolCall.function.name === "Write") {
+    const args = JSON.parse(toolCall.function.arguments) as {
+      file_path: string;
+      content: string;
+    };
+    await writeFile(args.file_path, args.content, "utf-8");
+    return "File written successfully";
   }
 
   throw new Error(`Unknown tool: ${toolCall.function.name}`);
