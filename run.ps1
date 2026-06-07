@@ -2,6 +2,8 @@ param(
   [Alias("p")]
   [string]$Prompt,
   [switch]$Interactive,
+  [switch]$Plain,
+  [switch]$Tui,
   [switch]$Acp,
   [Parameter(ValueFromRemainingArguments = $true)]
   [string[]]$Rest
@@ -17,12 +19,16 @@ if (-not (Test-Path $bun)) {
 Set-Location $PSScriptRoot
 
 if ($Acp -or ($Rest -contains "--acp")) {
-  & $bun run "$PSScriptRoot\app\main.ts" --acp
+  & $bun "$PSScriptRoot\app\main.ts" --acp
   exit $LASTEXITCODE
 }
 
 if ($Interactive -or ($Rest -contains "-i") -or ($Rest -contains "--chat")) {
-  & $bun run "$PSScriptRoot\app\main.ts" -i
+  if ($Plain -or ($Rest -contains "--plain")) {
+    & $bun "$PSScriptRoot\app\main.ts" -i --plain
+  } else {
+    & $bun "$PSScriptRoot\app\main.ts" -i --tui
+  }
   exit $LASTEXITCODE
 }
 
@@ -35,8 +41,12 @@ if (-not $Prompt) {
 }
 
 if (-not $Prompt) {
-  & $bun run "$PSScriptRoot\app\main.ts" -i
+  if ($Plain -or ($Rest -contains "--plain")) {
+    & $bun "$PSScriptRoot\app\main.ts" -i --plain
+  } else {
+    & $bun "$PSScriptRoot\app\main.ts" -i --tui
+  }
   exit $LASTEXITCODE
 }
 
-& $bun run "$PSScriptRoot\app\main.ts" -p $Prompt
+& $bun "$PSScriptRoot\app\main.ts" -p $Prompt

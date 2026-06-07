@@ -144,8 +144,8 @@ Local extensions beyond the CodeCrafters core stages:
 | LSP tools | Done | Chat mode — GoToDefinition, FindReferences, GetDiagnostics |
 | Edit / patch | Done | Chat mode — Review edited files, then Apply / Accept all / Decline |
 | ACP | Done | `npm run acp` or `bun run app/main.ts --acp` |
-| MCP | Planned | Plug in external tools and data sources |
-| TUI | Planned | Polished terminal user interface |
+| MCP | Done | Chat mode — copy `mcp.json.example` to `mcp.json` |
+| TUI | Done | Claude Code–style dashboard, mascot, `>` prompt, `/` commands |
 
 ### Not in scope (real Claude Code extras)
 

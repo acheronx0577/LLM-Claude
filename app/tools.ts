@@ -6,14 +6,15 @@ import type {
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
 import { webSearch } from "./webSearch.ts";
+import { truncateToolResult } from "./toolResult.ts";
 import type { FileChangeDecision, FileChangeRequest } from "./editApproval.ts";
 import {
   buildWritePreview,
   fileChangeFromEditPlan,
 } from "./editApproval.ts";
+import type { McpSession } from "./mcp.ts";
 
 const execAsync = promisify(exec);
-const MAX_TOOL_RESULT_CHARS = 10_000;
 
 const readTool: ChatCompletionTool = {
   type: "function",
@@ -208,14 +209,6 @@ export const chatTools: ChatCompletionTool[] = [
   getDiagnosticsTool,
 ];
 
-export function truncateToolResult(content: string): string {
-  if (content.length <= MAX_TOOL_RESULT_CHARS) {
-    return content;
-  }
-
-  return `${content.slice(0, MAX_TOOL_RESULT_CHARS)}\n\n[Output truncated]`;
-}
-
 function truncateResult(content: string): string {
   return truncateToolResult(content);
 }
@@ -238,6 +231,7 @@ export type ExecuteToolOptions = {
   approveFileChange?: (
     request: FileChangeRequest,
   ) => Promise<FileChangeDecision>;
+  mcp?: McpSession | null;
 };
 
 async function requireFileChangeApproval(
@@ -257,6 +251,18 @@ export async function executeTool(
 ): Promise<string> {
   const verbose = options.verbose ?? false;
   const { name, arguments: rawArgs } = toolCall.function;
+
+  if (options.mcp?.isMcpTool(name)) {
+    const args = JSON.parse(rawArgs) as Record<string, unknown>;
+    logToolUse(name, "MCP", verbose);
+
+    try {
+      return await options.mcp.callTool(name, args);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "MCP call failed";
+      return `MCP error: ${message}`;
+    }
+  }
 
   if (name === "Read") {
     const args = JSON.parse(rawArgs) as { file_path: string };
