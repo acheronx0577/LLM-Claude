@@ -1,34 +1,39 @@
 [![progress-banner](https://backend.codecrafters.io/progress/claude-code/4ffc826f-4881-4e99-8d06-736a8109abb1)](https://app.codecrafters.io/users/acheronx0577?r=2qF)
 
-This is a starting point for TypeScript solutions to the
-["Build Your own Claude Code" Challenge](https://codecrafters.io/challenges/claude-code).
+# LLM Claude — TypeScript Implementation
 
-Claude Code is an AI coding assistant that uses Large Language Models (LLMs) to
-understand code and perform actions through tool calls. In this challenge,
-you'll build your own Claude Code from scratch by implementing an LLM-powered
-coding assistant.
+A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code). Connects to an LLM via an OpenAI-compatible API, advertises Read/Write/Bash tools, and runs an agent loop until the task is complete.
 
-Along the way you'll learn about HTTP RESTful APIs, OpenAI-compatible tool
-calling, agent loop, and how to integrate multiple tools into an AI assistant.
+## Documentation
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+Full challenge guide, stage walkthroughs, and setup notes live in **[docs/ReadMe.md](docs/ReadMe.md)**.
 
-# Passing the first stage
+| Topic | Link |
+|-------|------|
+| Local setup | [docs/Local-Setup.md](docs/Local-Setup.md) |
+| Environment variables | Copy `.env.example` to `.env` and add your API key |
+| Stage 1 — LLM API | [docs/Stage-1-Communicate-with-LLM.md](docs/Stage-1-Communicate-with-LLM.md) |
+| Stage 6 — Bash tool | [docs/Stage-6-Implement-Bash-Tool.md](docs/Stage-6-Implement-Bash-Tool.md) |
 
-The entry point for your `claude-code` implementation is in `app/main.ts`. Study
-and uncomment the relevant code, and submit to pass the first stage:
+## Quick start
+
+```powershell
+bun install
+copy .env.example .env   # paste OPENROUTER_API_KEY or GROQ_API_KEY
+bun run app/main.ts -p "Hello"
+```
+
+Submit to CodeCrafters:
 
 ```sh
 codecrafters submit
 ```
 
-# Stage 2 & beyond
+## Project layout
 
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `bun (1.3)` installed locally.
-2. Run `./your_program.sh` to run your program, which is implemented in
-   `app/main.ts`.
-3. Run `codecrafters submit` to submit your solution to CodeCrafters. Test
-   output will be streamed to your terminal.
+```
+app/main.ts          # Agent loop + Read, Write, Bash tools
+docs/                # Challenge documentation (stages, setup, references)
+.codecrafters/       # CodeCrafters build scripts
+your_program.sh      # Local runner
+```
