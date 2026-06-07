@@ -1,5 +1,7 @@
+  <img src="https://komarev.com/ghpvc/?username=acheronx0577&repo=LLM-Claude&label=Project+Views&color=orange" alt="Project Views" />
+
+
 <p align="center">
-    <img src="https://komarev.com/ghpvc/?username=acheronx0577&repo=LLM-Claude&label=Project+Views&color=orange" alt="Project Views" />
   <a href="https://app.codecrafters.io/users/acheronx0577?r=2qF">
     <img src="https://backend.codecrafters.io/progress/claude-code/4ffc826f-4881-4e99-8d06-736a8109abb1" alt="progress-banner" />
   </a>
