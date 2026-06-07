@@ -1,9 +1,13 @@
+import { exec } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
+import { promisify } from "node:util";
 import OpenAI from "openai";
 import type {
   ChatCompletionMessageParam,
   ChatCompletionMessageToolCall,
 } from "openai/resources/chat/completions";
+
+const execAsync = promisify(exec);
 
 const tools = [
   {
@@ -44,6 +48,23 @@ const tools = [
       },
     },
   },
+  {
+    type: "function" as const,
+    function: {
+      name: "Bash",
+      description: "Execute a shell command",
+      parameters: {
+        type: "object",
+        required: ["command"],
+        properties: {
+          command: {
+            type: "string",
+            description: "The command to execute",
+          },
+        },
+      },
+    },
+  },
 ];
 
 async function executeTool(
@@ -63,6 +84,26 @@ async function executeTool(
     };
     await writeFile(args.file_path, args.content, "utf-8");
     return "File written successfully";
+  }
+
+  if (toolCall.function.name === "Bash") {
+    const args = JSON.parse(toolCall.function.arguments) as {
+      command: string;
+    };
+
+    try {
+      const { stdout, stderr } = await execAsync(args.command, {
+        cwd: process.cwd(),
+      });
+      return stdout + stderr;
+    } catch (error) {
+      const execError = error as Error & {
+        stdout?: string;
+        stderr?: string;
+      };
+      const output = (execError.stdout ?? "") + (execError.stderr ?? "");
+      return output || execError.message;
+    }
   }
 
   throw new Error(`Unknown tool: ${toolCall.function.name}`);
