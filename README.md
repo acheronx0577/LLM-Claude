@@ -1,5 +1,7 @@
 [![progress-banner](https://backend.codecrafters.io/progress/claude-code/4ffc826f-4881-4e99-8d06-736a8109abb1)](https://app.codecrafters.io/users/acheronx0577?r=2qF)
 
+![Interactive TUI demo](docs/Pics/animated_720P.gif)
+
 # LLM Claude — TypeScript Implementation
 
 A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code), featuring ACP editor integration and TypeScript LSP tools. Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, and Bash tools (CodeCrafters).

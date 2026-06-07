@@ -61,7 +61,6 @@ export class TuiLineInput {
   private finish(line: string | null): void {
     this.resolve?.(line);
     this.resolve = null;
-    this.onChange();
   }
 
   private tryTabComplete(): void {

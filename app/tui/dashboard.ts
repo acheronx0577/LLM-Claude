@@ -5,6 +5,7 @@ import {
   drawTitledTop,
   style,
   truncateVisible,
+  visibleLength,
 } from "./ansi.ts";
 
 export type DashboardMeta = {
@@ -35,21 +36,21 @@ export function renderDashboard(
   const spriteBlock = placeSprite(sprite, leftInner, mascot.x + shake);
 
   const leftRows = [
-    `${style.white}Welcome back ${meta.username}!${style.reset}`,
+    `${style.fg}Welcome back ${style.bold}${style.username}${meta.username}${style.reset}${style.fg}!${style.reset}`,
     "",
     ...spriteBlock,
     "",
-    `${style.white}${truncateVisible(meta.modelLabel, leftInner)}${style.reset}`,
-    `${style.dim}${style.gray}${truncateVisible(meta.providerLabel, leftInner)}${style.reset}`,
-    `${style.gray}${truncateVisible(meta.toolSummary, leftInner)}${style.reset}`,
-    `${style.gray}${truncateVisible(meta.cwd, leftInner)}${style.reset}`,
+    `${style.highlight}${truncateVisible(meta.modelLabel, leftInner)}${style.reset}`,
+    `${style.muted}${truncateVisible(meta.providerLabel, leftInner)}${style.reset}`,
+    `${style.dimFg}${truncateVisible(meta.toolSummary, leftInner)}${style.reset}`,
+    `${style.dimFg}${truncateVisible(meta.cwd, leftInner)}${style.reset}`,
   ];
 
   const rightRows = [
-    `${style.orange}Tips for getting started${style.reset}`,
+    `${style.bold}${style.highlight}Tips for getting started${style.reset}`,
     "",
     ...TIPS.map(
-      (tip) => `${style.white}${truncateVisible(tip, rightInner)}${style.reset}`,
+      (tip) => `${style.fg}${truncateVisible(tip, rightInner)}${style.reset}`,
     ),
   ];
 
@@ -79,7 +80,8 @@ function placeSprite(
   startX: number,
 ): string[] {
   return lines.map((line) => {
-    const pad = Math.max(0, Math.min(startX, width - line.length));
-    return `${" ".repeat(pad)}${style.orange}${line}${style.reset}`;
+    const lineWidth = visibleLength(line);
+    const pad = Math.max(0, Math.min(startX, width - lineWidth));
+    return `${" ".repeat(pad)}${style.mascot}${line}${style.reset}`;
   });
 }

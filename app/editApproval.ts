@@ -1,6 +1,7 @@
 import type { Interface } from "node:readline/promises";
 import { readFile } from "node:fs/promises";
 import type { EditPlan } from "./editTools.ts";
+import { openFileInEditor, editorOpenHint } from "./openInEditor.ts";
 
 const CONTEXT_RADIUS = 2;
 
@@ -14,6 +15,20 @@ export type FileChangeRequest = {
 };
 
 export type FileChangeDecision = "accept" | "accept_all" | "decline";
+
+export type ApprovalUi = {
+  beginReview?: () => void;
+  show: (text: string) => void;
+  ask: (prompt: string) => Promise<string>;
+  openInEditor?: (filePath: string, startLine: number) => Promise<boolean>;
+  isCancelled?: () => boolean;
+};
+
+function throwIfCancelled(ui: ApprovalUi): void {
+  if (ui.isCancelled?.()) {
+    throw new Error("cancelled");
+  }
+}
 
 function formatStats(linesAdded: number, linesRemoved: number): string {
   return `+${linesAdded} -${linesRemoved}`;
@@ -162,24 +177,24 @@ export function fileChangeFromEditPlan(
   };
 }
 
-function printFilePicker(
+function formatFilePicker(
   changes: FileChangeRequest[],
   pending: FileChangeRequest,
-): void {
-  console.error("\nEdited this turn — enter a number to jump:");
+): string {
+  const lines = ["Edited this turn:"];
+
   for (const [index, change] of changes.entries()) {
     const marker = change.file_path === pending.file_path ? " ← pending" : "";
-    console.error(
-      `  ${index + 1}. ${change.file_path}  ${formatStats(change.linesAdded, change.linesRemoved)}  ${formatJumpLink(change.file_path, change.startLine)}${marker}`,
+    lines.push(
+      `  ${index + 1}. ${change.file_path}  ${formatStats(change.linesAdded, change.linesRemoved)}${marker}`,
     );
   }
+
+  return lines.join("\n");
 }
 
-function printFileJump(change: FileChangeRequest): void {
-  console.error(`\n${formatJumpLink(change.file_path, change.startLine)}`);
-  console.error("─".repeat(60));
-  console.error(change.contextView);
-  console.error("─".repeat(60));
+function formatChangeProposal(_request: FileChangeRequest): string {
+  return "File change proposed.\n[r] Review  [a] Accept all  [d] Decline";
 }
 
 function parseFileSelection(
@@ -228,20 +243,22 @@ function isApply(answer: string): boolean {
   return answer === "y" || answer === "apply" || answer === "yes";
 }
 
-function isBack(answer: string): boolean {
-  return answer === "b" || answer === "back";
-}
-
 async function reviewChanges(
-  rl: Interface,
+  ui: ApprovalUi,
   changes: FileChangeRequest[],
   pending: FileChangeRequest,
 ): Promise<"apply" | "accept_all" | "decline" | "continue"> {
   while (true) {
-    printFilePicker(changes, pending);
-    console.error("[1-N] Jump to file  [y] Apply pending  [a] Accept all  [d] Decline");
+    throwIfCancelled(ui);
 
-    const answer = (await rl.question("Review? ")).trim();
+    ui.show(
+      [
+        formatFilePicker(changes, pending),
+        "[1-N] Open in editor  [y] Apply pending  [a] Accept all  [d] Decline",
+      ].join("\n"),
+    );
+
+    const answer = (await ui.ask("Review? ")).trim();
 
     if (isDecline(answer)) {
       return "decline";
@@ -257,42 +274,41 @@ async function reviewChanges(
 
     const selected = parseFileSelection(answer, changes);
     if (selected) {
-      printFileJump(selected);
-      console.error("[b] Back  [y] Apply pending  [a] Accept all  [d] Decline");
+      const opened =
+        (await ui.openInEditor?.(selected.file_path, selected.startLine)) ??
+        false;
 
-      const followUp = (await rl.question("Review? ")).trim();
-
-      if (isBack(followUp)) {
-        continue;
-      }
-
-      if (isDecline(followUp)) {
-        return "decline";
-      }
-
-      if (isAcceptAll(followUp)) {
-        return "accept_all";
-      }
-
-      if (isApply(followUp)) {
-        return "apply";
-      }
-
-      const nested = parseFileSelection(followUp, changes);
-      if (nested) {
-        printFileJump(nested);
-        continue;
-      }
-
-      console.error("Use [b] Back, [y] Apply pending, [a] Accept all, or [d] Decline.");
+      ui.show(
+        [
+          formatFilePicker(changes, pending),
+          opened
+            ? `Opened ${selected.file_path} in editor.`
+            : `Could not open ${selected.file_path} in editor. ${editorOpenHint()}`,
+          "[1-N] Open in editor  [y] Apply pending  [a] Accept all  [d] Decline",
+        ].join("\n"),
+      );
       continue;
     }
 
-    console.error("Enter a file number, or use [y], [a], or [d].");
+    ui.show("Enter a file number, or use [y], [a], or [d].");
   }
 }
 
-export function createFileChangeApprover(rl: Interface) {
+export function createReadlineApprovalUi(rl: Interface): ApprovalUi {
+  return {
+    show(text) {
+      console.error(`\n${text}`);
+    },
+    ask(prompt) {
+      return rl.question(prompt).then((answer) => answer.trim());
+    },
+    async openInEditor(filePath, startLine) {
+      return openFileInEditor(filePath, startLine);
+    },
+  };
+}
+
+export function createFileChangeApproverWithUi(ui: ApprovalUi) {
   let acceptAll = false;
   const changesThisTurn: FileChangeRequest[] = [];
 
@@ -306,10 +322,10 @@ export function createFileChangeApprover(rl: Interface) {
     changesThisTurn.push(request);
 
     while (true) {
-      console.error("\nFile change proposed.");
-      console.error("[r] Review  [a] Accept all  [d] Decline");
+      throwIfCancelled(ui);
+      ui.show(formatChangeProposal(request));
 
-      const answer = (await rl.question("Change? ")).trim().toLowerCase();
+      const answer = (await ui.ask("Change? ")).trim().toLowerCase();
 
       if (isDecline(answer)) {
         return "decline";
@@ -321,7 +337,8 @@ export function createFileChangeApprover(rl: Interface) {
       }
 
       if (isReview(answer)) {
-        const decision = await reviewChanges(rl, changesThisTurn, request);
+        ui.beginReview?.();
+        const decision = await reviewChanges(ui, changesThisTurn, request);
 
         if (decision === "apply") {
           return "accept";
@@ -339,7 +356,11 @@ export function createFileChangeApprover(rl: Interface) {
         continue;
       }
 
-      console.error("Press [r] to review, [a] to accept all, or [d] to decline.");
+      ui.show("Press [r] to review, [a] to accept all, or [d] to decline.");
     }
   };
+}
+
+export function createFileChangeApprover(rl: Interface) {
+  return createFileChangeApproverWithUi(createReadlineApprovalUi(rl));
 }

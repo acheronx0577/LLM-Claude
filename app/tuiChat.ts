@@ -1,10 +1,7 @@
-import * as readline from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { runAgent } from "./agent.ts";
 import type { ApiConfig } from "./config.ts";
-import { formatAgentError, isExitCommand } from "./chatShared.ts";
-import { createFileChangeApprover } from "./editApproval.ts";
+import { formatAgentError, isCancelled, isExitCommand } from "./chatShared.ts";
 import { createMcpSession } from "./mcp.ts";
 import { chatTools } from "./tools.ts";
 import {
@@ -12,6 +9,7 @@ import {
   formatCommandLabel,
   SLASH_COMMANDS,
 } from "./tui/commands.ts";
+import { createTuiFileChangeApprover } from "./tui/editApproval.ts";
 import { buildDashboardMeta } from "./tui/meta.ts";
 import { TuiScreen } from "./tui/screen.ts";
 
@@ -21,33 +19,25 @@ export async function runInteractiveTuiChat(config: ApiConfig): Promise<void> {
   const tools = mcp ? [...chatTools, ...mcp.tools] : chatTools;
   const screen = new TuiScreen();
   let running = true;
+  let atPrompt = false;
+  let agentAbort: AbortController | null = null;
 
   screen.setDashboardMeta(
     buildDashboardMeta(config, mcp?.tools.length ?? 0, mcp?.serverNames ?? []),
   );
   screen.setOnInterrupt(() => {
-    running = false;
+    agentAbort?.abort();
+    screen.cancelActiveAgentUi();
+    if (atPrompt) {
+      running = false;
+    }
   });
   screen.start();
 
-  const reviewFileChange = async (
-    request: Parameters<ReturnType<typeof createFileChangeApprover>>[0],
-  ) => {
-    screen.suspend();
-    screen.setMascotMode("thinking");
-
-    const rl = readline.createInterface({ input, output });
-    let decision: Awaited<ReturnType<ReturnType<typeof createFileChangeApprover>>>;
-    try {
-      decision = await createFileChangeApprover(rl)(request);
-    } finally {
-      rl.close();
-    }
-
-    screen.resume();
-    screen.setMascotMode("thinking");
-    return decision;
-  };
+  const reviewFileChange = createTuiFileChangeApprover(
+    screen,
+    () => agentAbort?.signal,
+  );
 
   const runSlashCommand = (commandInput: string): boolean => {
     const command = findExactSlashCommand(commandInput);
@@ -112,7 +102,9 @@ export async function runInteractiveTuiChat(config: ApiConfig): Promise<void> {
       screen.setMascotMode("idle");
       screen.setStatus("");
 
+      atPrompt = true;
       const userInput = (await screen.readUserLine())?.trim() ?? "";
+      atPrompt = false;
 
       if (!running) {
         break;
@@ -132,9 +124,16 @@ export async function runInteractiveTuiChat(config: ApiConfig): Promise<void> {
       }
 
       messages.push({ role: "user", content: userInput });
-      screen.appendTranscript({ role: "you", text: userInput });
-      screen.setMascotMode("thinking");
-      screen.setStatus("Calling the model…");
+
+      screen.batch(() => {
+        screen.appendTranscript({ role: "you", text: userInput });
+      });
+
+      screen.setAgentThinking();
+
+      let streamText = "";
+      agentAbort = new AbortController();
+      screen.setInterruptSignal(agentAbort.signal);
 
       try {
         await runAgent(config.client, config.model, messages, {
@@ -142,28 +141,48 @@ export async function runInteractiveTuiChat(config: ApiConfig): Promise<void> {
           tools,
           approveFileChange: reviewFileChange,
           mcp,
+          signal: agentAbort.signal,
+          onAssistantTextDelta: async (delta) => {
+            streamText += delta;
+          },
+          onAssistantStreamEnd: async () => {
+            if (streamText.trim()) {
+              await screen.revealMessage(streamText);
+            }
+            streamText = "";
+          },
           onAssistantText: async (text) => {
-            screen.appendTranscript({ role: "assistant", text });
-            screen.setMascotMode("thinking");
+            if (!streamText.trim() && text.trim()) {
+              await screen.revealMessage(text);
+            }
           },
           onToolStart: async ({ name }) => {
-            screen.setMascotMode("tool");
-            screen.setStatus(`Running ${name}…`);
+            streamText = "";
+            screen.clearEmptyAssistant();
+            screen.setAgentActivity(`Running ${name}`, "tool");
           },
-          onToolComplete: async ({ name }) => {
-            screen.setStatus(`Finished ${name}`);
-            screen.setMascotMode("thinking");
+          onToolComplete: async () => {
+            screen.setAgentActivity("Thinking", "thinking");
           },
         });
-
-        screen.setMascotMode("idle");
-        screen.setStatus("");
       } catch (error) {
+        screen.clearEmptyAssistant();
+        if (isCancelled(error)) {
+          const { transcript } = formatAgentError(error);
+          screen.appendTranscript({ role: "system", text: transcript });
+          continue;
+        }
+
         screen.setMascotMode("error");
         const { transcript, status } = formatAgentError(error);
         screen.appendTranscript({ role: "system", text: transcript });
         screen.setStatus(status);
+      } finally {
+        streamText = "";
+        agentAbort = null;
+        screen.setInterruptSignal(null);
         screen.setMascotMode("idle");
+        screen.setStatus("");
       }
     }
   } finally {

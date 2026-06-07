@@ -1,95 +1,110 @@
 import type { MascotMode } from "./types.ts";
+import { padEndVisible } from "./ansi.ts";
 
-const SPRITE_WIDTH = 9;
+const SPRITE_DISPLAY_WIDTH = 14;
 
-const FRAMES: string[][] = [
-  [
-    "  ▄▀▀▀▄  ",
-    " ▐ ● ● ▌ ",
-    "  ▀▄▄▄▀   ",
-  ],
-  [
-    "  ▄▀▀▀▄  ",
-    " ▐ ● ● ▌ ",
-    "  ▀▀ ▀▀   ",
-  ],
-  [
-    "  ▄▀▀▀▄  ",
-    " ▐ ◐ ◑ ▌ ",
-    "  ▀▄▄▄▀   ",
-  ],
-  [
-    "  ▄▀▀▀▄  ",
-    " ▐ × × ▌ ",
-    "  ▀▄▄▄▀   ",
-  ],
-];
+const HEAD = "  ／l、";
+const BODY = "  l  ~ヽ";
+const FEET = "  じしf_,)ノ";
+
+function faceLine(eyeLeft: string, eyeRight: string): string {
+  return `（${eyeLeft}､ ${eyeRight} ７`;
+}
+
+function buildSprite(eyeLeft: string, eyeRight: string): string[] {
+  return [HEAD, faceLine(eyeLeft, eyeRight), BODY, FEET].map((line) =>
+    padEndVisible(line, SPRITE_DISPLAY_WIDTH),
+  );
+}
+
+function framesFromEyes(
+  eyes: ReadonlyArray<readonly [string, string]>,
+): string[][] {
+  return eyes.map(([left, right]) => buildSprite(left, right));
+}
+
+const IDLE_FRAMES = framesFromEyes([
+  ["ﾟ", "｡"],
+  ["-", "-"],
+]);
+
+const THINKING_FRAMES = framesFromEyes([
+  ["◔", "◑"],
+  ["◑", "◔"],
+  ["ﾟ", "｡"],
+]);
+
+const TOOL_FRAMES = framesFromEyes([
+  ["O", "O"],
+  ["ﾟ", "｡"],
+]);
+
+const FRAME_HOLDS: Record<MascotMode, number[]> = {
+  idle: [18, 2],
+  thinking: [6, 6, 6],
+  tool: [5, 5],
+  error: [1],
+};
+
+function centerX(stageWidth: number): number {
+  return Math.max(0, Math.floor(stageWidth / 2) - Math.ceil(SPRITE_DISPLAY_WIDTH / 2));
+}
+
+function framesForMode(mode: MascotMode): string[][] {
+  if (mode === "idle") {
+    return IDLE_FRAMES;
+  }
+
+  if (mode === "thinking") {
+    return THINKING_FRAMES;
+  }
+
+  if (mode === "tool") {
+    return TOOL_FRAMES;
+  }
+
+  return [buildSprite("×", "×")];
+}
 
 export class Mascot {
-  x = 2;
-  direction = 1;
+  x = 0;
   frame = 0;
-  shake = 0;
+  holdTicks = 0;
   mode: MascotMode = "idle";
 
   setMode(mode: MascotMode): void {
+    if (this.mode !== mode) {
+      this.frame = 0;
+      this.holdTicks = 0;
+    }
+
     this.mode = mode;
   }
 
   tick(stageWidth: number): void {
-    if (this.mode === "idle") {
-      this.x += this.direction;
-      const maxX = Math.max(1, stageWidth - SPRITE_WIDTH - 1);
+    this.x = centerX(stageWidth);
 
-      if (this.x <= 1 || this.x >= maxX) {
-        this.direction *= -1;
-        this.x = Math.min(Math.max(this.x, 1), maxX);
-      }
+    const frames = framesForMode(this.mode);
+    const holds = FRAME_HOLDS[this.mode];
+    const hold = holds[this.frame % holds.length] ?? 1;
 
-      this.frame = (this.frame + 1) % 2;
+    this.holdTicks++;
+    if (this.holdTicks < hold) {
       return;
     }
 
-    if (this.mode === "thinking") {
-      this.x = Math.max(1, Math.floor(stageWidth / 2) - 4);
-      this.frame = (this.frame + 1) % 3;
-      return;
-    }
-
-    if (this.mode === "tool") {
-      this.x += this.direction * 2;
-      const maxX = Math.max(1, stageWidth - SPRITE_WIDTH - 1);
-
-      if (this.x <= 1 || this.x >= maxX) {
-        this.direction *= -1;
-        this.x = Math.min(Math.max(this.x, 1), maxX);
-      }
-
-      this.frame = (this.frame + 1) % 2;
-      return;
-    }
-
-    if (this.mode === "error") {
-      this.shake = (this.shake + 1) % 4;
-      this.x = Math.max(
-        1,
-        Math.floor(stageWidth / 2) - 4 + (this.shake % 2 === 0 ? -1 : 1),
-      );
-      this.frame = 3;
-    }
+    this.holdTicks = 0;
+    this.frame = (this.frame + 1) % frames.length;
   }
 
   getSpriteLines(): string[] {
-    return FRAMES[this.frame % FRAMES.length] ?? FRAMES[0]!;
+    const frames = framesForMode(this.mode);
+    return frames[this.frame % frames.length] ?? frames[0]!;
   }
 
   getShakeOffset(): number {
-    if (this.mode !== "error") {
-      return 0;
-    }
-
-    return this.shake % 2 === 0 ? -1 : 1;
+    return 0;
   }
 }
 
-export { SPRITE_WIDTH };
+export { SPRITE_DISPLAY_WIDTH as SPRITE_WIDTH };

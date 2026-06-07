@@ -34,7 +34,24 @@ export type AgentErrorMessage = {
   status: string;
 };
 
+export function isCancelled(error: unknown): boolean {
+  if (error instanceof Error && error.message === "cancelled") {
+    return true;
+  }
+
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "name" in error &&
+    (error as { name?: string }).name === "AbortError"
+  );
+}
+
 export function formatAgentError(error: unknown): AgentErrorMessage {
+  if (isCancelled(error)) {
+    return { transcript: "Cancelled.", status: "" };
+  }
+
   if (isAgentToolError(error)) {
     const text =
       "Tool error: this model failed to call a tool. Try GROQ_MODEL=openai/gpt-oss-120b or OpenRouter.";
