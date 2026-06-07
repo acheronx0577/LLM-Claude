@@ -40,6 +40,19 @@ Full challenge guide, stage walkthroughs, and setup notes live in **[docs/ReadMe
 
 Optional search APIs in `.env`: `TAVILY_API_KEY`, `BRAVE_SEARCH_API_KEY`.
 
+## Scope vs real Claude Code
+
+This repo is the [CodeCrafters challenge](https://codecrafters.io/challenges/claude-code) — a **smaller, intentional subset** of what production Claude Code provides. The goal is to learn the agent loop and core tool calling, not to replicate every tool in Anthropic’s product.
+
+| In this project | Real Claude Code also has (not implemented here) |
+|-----------------|--------------------------------------------------|
+| Read, Write, Bash | **Glob**, **Grep**, **Task** (subagents), NotebookEdit, etc. |
+| Edit + review flow (chat) | Richer edit/diff UX, plan mode, hooks |
+| WebSearch, LSP tools (chat) | Built-in search, IDE-native navigation |
+| ACP server (local) | Full desktop/CLI product, MCP marketplace |
+
+**CodeCrafters submit** only exercises Read, Write, and Bash. Everything else is optional local enhancement.
+
 ## Quick start
 
 ```powershell
