@@ -3,7 +3,7 @@
     <img src="https://backend.codecrafters.io/progress/claude-code/4ffc826f-4881-4e99-8d06-736a8109abb1" alt="progress-banner" />
   </a>
   &nbsp;&nbsp;
-  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Facheronx0577%2FLLM-Claude&count_bg=%23F16A34&title_bg=%23555555&title=Project+Views" alt="Project Views" />
+  <img src="https://api.visitorbadge.io/api/VisitorHit?user=acheronx0577&repo=LLM-Claude&label=Project+Views&labelColor=%23555555&countColor=%23f16a34" alt="Project Views" />
 </p>
 
 
