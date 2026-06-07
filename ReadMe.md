@@ -1,8 +1,6 @@
 # Build Your Own Claude Code
 
-| ← Previous | Next → |
-|------------|--------|
-| *Home* | [Local Setup](Local-Setup.md) |
+← *Home* · [Next: Local Setup →](Local-Setup.md)
 
 A hands-on challenge to build a **terminal-based AI coding assistant** that uses Large Language Models (LLMs) to understand code and complete programming tasks autonomously.
 
@@ -139,6 +137,4 @@ TBD
 
 ---
 
-| ← Previous | Next → |
-|------------|--------|
-| *Home* | [Local Setup](Local-Setup.md) |
+← *Home* · [Next: Local Setup →](Local-Setup.md)
