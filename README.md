@@ -1,9 +1,11 @@
 <p align="center">
+  <img src="https://api.visitorbadge.io/api/VisitorHit?user=acheronx0577&repo=LLM-Claude&label=Project+Views&labelColor=%23555555&countColor=%23f16a34" alt="Project Views" />
+</p>
+
+<p align="center">
   <a href="https://app.codecrafters.io/users/acheronx0577?r=2qF">
     <img src="https://backend.codecrafters.io/progress/claude-code/4ffc826f-4881-4e99-8d06-736a8109abb1" alt="progress-banner" />
   </a>
-  &nbsp;&nbsp;
-  <img src="https://api.visitorbadge.io/api/VisitorHit?user=acheronx0577&repo=LLM-Claude&label=Project+Views&labelColor=%23555555&countColor=%23f16a34" alt="Project Views" />
 </p>
 
 
