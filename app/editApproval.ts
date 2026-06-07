@@ -1,7 +1,6 @@
 import type { Interface } from "node:readline/promises";
 import { readFile } from "node:fs/promises";
-import type { EditArgs, EditPlan } from "./editTools.ts";
-import { planEdit } from "./editTools.ts";
+import type { EditPlan } from "./editTools.ts";
 
 const CONTEXT_RADIUS = 2;
 
@@ -161,11 +160,6 @@ export function fileChangeFromEditPlan(
     startLine: plan.startLine,
     contextView: plan.contextView,
   };
-}
-
-export async function buildEditPreview(args: EditArgs): Promise<FileChangeRequest> {
-  const plan = await planEdit(args);
-  return fileChangeFromEditPlan(args.file_path, plan);
 }
 
 function printFilePicker(
