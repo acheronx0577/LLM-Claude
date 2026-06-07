@@ -1,5 +1,10 @@
 # Build Your Own Claude Code
 
+<p align="center">
+  <img src="https://img.shields.io/badge/You_are_here-Home-555?style=for-the-badge" alt="Home">
+  <a href="Local-Setup.md"><img src="https://img.shields.io/badge/Next-_Local_Setup-→-0969da?style=for-the-badge" alt="Next: Local Setup"></a>
+</p>
+
 A hands-on challenge to build a **terminal-based AI coding assistant** that uses Large Language Models (LLMs) to understand code and complete programming tasks autonomously.
 
 Tell it *"Refactor main.py to use a class"* — and watch it read the file, generate a new version, and apply the edit on its own.
@@ -15,6 +20,7 @@ Tell it *"Refactor main.py to use a class"* — and watch it read the file, gene
 - [Stages](#stages)
 - [Advanced Features](#advanced-features-later)
 - [Getting Started](#getting-started)
+- [Local Setup](Local-Setup.md)
 
 ---
 
@@ -119,9 +125,9 @@ After the core stages, extend your assistant with:
 
 ## Getting Started
 
-> **Status:** Project initialized — implementation not yet started.
+> **Status:** Local setup complete — Stage 1 activated.
 
-1. Clone this repository
+1. Complete **[Local Setup](Local-Setup.md)** (clone repo + CodeCrafters CLI)
 2. Start with **Stage 1: Communicate with the LLM**
 3. Complete each stage before moving to the next
 4. Commit your progress as you go
@@ -131,3 +137,10 @@ After the core stages, extend your assistant with:
 ## License
 
 TBD
+
+---
+
+<p align="center">
+  <img src="https://img.shields.io/badge/You_are_here-Home-555?style=for-the-badge" alt="Home">
+  <a href="Local-Setup.md"><img src="https://img.shields.io/badge/Next-_Local_Setup-→-0969da?style=for-the-badge" alt="Next: Local Setup"></a>
+</p>
