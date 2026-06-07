@@ -1,6 +1,6 @@
 # Local Setup
 
-← [Back: README](ReadMe.md) · [Next: Stage 1 — Communicate with the LLM →](ReadMe.md#stages)
+← [Back: README](ReadMe.md) · [Next: Stage 1 — Communicate with the LLM →](Stage-1-Communicate-with-LLM.md)
 
 **Status:** Completed
 
@@ -41,7 +41,7 @@ codecrafters ping
 
 ## Done
 
-The first stage is now activated. Continue to **Stage 1: Communicate with the LLM**.
+The first stage is now activated. Continue to **[Stage 1: Communicate with the LLM](Stage-1-Communicate-with-LLM.md)**.
 
 *Example — what the CodeCrafters Local Setup page looks like after you clone the repo and connect the CLI (`codecrafters ping` succeeds):*
 
@@ -49,4 +49,4 @@ The first stage is now activated. Continue to **Stage 1: Communicate with the LL
 
 ---
 
-← [Back: README](ReadMe.md) · [Next: Stage 1 — Communicate with the LLM →](ReadMe.md#stages)
+← [Back: README](ReadMe.md) · [Next: Stage 1 — Communicate with the LLM →](Stage-1-Communicate-with-LLM.md)
