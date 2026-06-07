@@ -3,7 +3,10 @@
   "description": "Build your own Claude Code challenge, from CodeCrafters",
   "type": "module",
   "scripts": {
-    "dev": "bun run app/main.ts"
+    "dev": "bun run app/main.ts",
+    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File ./run.ps1",
+    "chat": "powershell -NoProfile -ExecutionPolicy Bypass -File ./run.ps1 -Interactive",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "openai": "^6.16.0"
