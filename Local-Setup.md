@@ -1,9 +1,8 @@
 # Local Setup
 
-<p align="center">
-  <a href="ReadMe.md"><img src="https://img.shields.io/badge/←_Back-README-2ea44f?style=for-the-badge" alt="Back to README"></a>
-  <a href="ReadMe.md#stages"><img src="https://img.shields.io/badge/Next-_Stage_1-→-0969da?style=for-the-badge" alt="Next: Stage 1"></a>
-</p>
+| ← Previous | Next → |
+|------------|--------|
+| [README](ReadMe.md) | [Stage 1](ReadMe.md#stages) |
 
 **Status:** Completed
 
@@ -50,7 +49,6 @@ The first stage is now activated. Continue to **Stage 1: Communicate with the LL
 
 ---
 
-<p align="center">
-  <a href="ReadMe.md"><img src="https://img.shields.io/badge/←_Back-README-2ea44f?style=for-the-badge" alt="Back to README"></a>
-  <a href="ReadMe.md#stages"><img src="https://img.shields.io/badge/Next-_Stage_1-→-0969da?style=for-the-badge" alt="Next: Stage 1"></a>
-</p>
+| ← Previous | Next → |
+|------------|--------|
+| [README](ReadMe.md) | [Stage 1](ReadMe.md#stages) |

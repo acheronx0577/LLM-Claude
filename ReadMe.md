@@ -1,9 +1,8 @@
 # Build Your Own Claude Code
 
-<p align="center">
-  <img src="https://img.shields.io/badge/You_are_here-Home-555?style=for-the-badge" alt="Home">
-  <a href="Local-Setup.md"><img src="https://img.shields.io/badge/Next-_Local_Setup-→-0969da?style=for-the-badge" alt="Next: Local Setup"></a>
-</p>
+| ← Previous | Next → |
+|------------|--------|
+| *Home* | [Local Setup](Local-Setup.md) |
 
 A hands-on challenge to build a **terminal-based AI coding assistant** that uses Large Language Models (LLMs) to understand code and complete programming tasks autonomously.
 
@@ -140,7 +139,6 @@ TBD
 
 ---
 
-<p align="center">
-  <img src="https://img.shields.io/badge/You_are_here-Home-555?style=for-the-badge" alt="Home">
-  <a href="Local-Setup.md"><img src="https://img.shields.io/badge/Next-_Local_Setup-→-0969da?style=for-the-badge" alt="Next: Local Setup"></a>
-</p>
+| ← Previous | Next → |
+|------------|--------|
+| *Home* | [Local Setup](Local-Setup.md) |
