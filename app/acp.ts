@@ -17,7 +17,8 @@ import type { ChatCompletionMessageParam } from "openai/resources/chat/completio
 import type { ChatCompletionMessageToolCall } from "openai/resources/chat/completions";
 import { runAgent } from "./agent.ts";
 import type { ApiConfig } from "./config.ts";
-import { coreTools, truncateToolResult } from "./tools.ts";
+import { coreTools } from "./tools.ts";
+import { truncateToolResult } from "./toolResult.ts";
 
 type SessionState = {
   cwd: string;
