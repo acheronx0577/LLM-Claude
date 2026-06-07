@@ -1,6 +1,10 @@
 [![progress-banner](https://backend.codecrafters.io/progress/claude-code/4ffc826f-4881-4e99-8d06-736a8109abb1)](https://app.codecrafters.io/users/acheronx0577?r=2qF)
 
-![Interactive TUI demo](docs/Pics/animated_1080P.gif)
+<p align="center">
+  <a href="https://github.com/acheronx0577/LLM-Claude/blob/main/docs/Pics/animated_1080P.gif">
+    <img src="https://github.com/acheronx0577/LLM-Claude/raw/main/docs/Pics/animated_1080P.gif" alt="Interactive TUI demo" width="960" />
+  </a>
+</p>
 
 # LLM Claude — TypeScript Implementation
 
