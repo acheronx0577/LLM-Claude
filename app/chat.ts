@@ -3,6 +3,7 @@ import { stdin as input, stdout as output } from "node:process";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { isAgentToolError, runAgent } from "./agent.ts";
 import type { ApiConfig } from "./config.ts";
+import { createFileChangeApprover } from "./editApproval.ts";
 import { chatTools } from "./tools.ts";
 
 const EXIT_COMMANDS = new Set(["exit", "quit", "/exit", "/quit", "q"]);
@@ -24,7 +25,8 @@ export async function runInteractiveChat(config: ApiConfig): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
   console.error("LLM Claude chat");
-  console.error("Tools: Read, Write, Bash, WebSearch, GoToDefinition, FindReferences, GetDiagnostics");
+  console.error("Tools: Read, Write, Edit, Bash, WebSearch, GoToDefinition, FindReferences, GetDiagnostics");
+  console.error("Write/Edit: [r] Review first, then jump to file:line — [y] Apply [a] Accept all [d] Decline");
   console.error("Type exit to quit.\n");
 
   try {
@@ -38,9 +40,11 @@ export async function runInteractiveChat(config: ApiConfig): Promise<void> {
       messages.push({ role: "user", content: userInput });
 
       try {
+        const approveFileChange = createFileChangeApprover(rl);
         const reply = await runAgent(config.client, config.model, messages, {
           verbose: true,
           tools: chatTools,
+          approveFileChange,
         });
         console.log(`\nAssistant: ${reply}\n`);
       } catch (error) {
