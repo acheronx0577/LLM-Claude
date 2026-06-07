@@ -142,6 +142,7 @@ Local extensions beyond the CodeCrafters core stages:
 | Interactive chat | Done | `npm run chat` or `.\run.ps1` |
 | Web search | Done | Chat mode; optional `TAVILY_API_KEY` |
 | LSP tools | Done | Chat mode — GoToDefinition, FindReferences, GetDiagnostics |
+| Edit / patch | Done | Chat mode — Review edited files, then Apply / Accept all / Decline |
 | ACP | Done | `npm run acp` or `bun run app/main.ts --acp` |
 | MCP | Planned | Plug in external tools and data sources |
 | TUI | Planned | Polished terminal user interface |
