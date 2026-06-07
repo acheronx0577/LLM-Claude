@@ -147,6 +147,10 @@ Local extensions beyond the CodeCrafters core stages:
 | MCP | Planned | Plug in external tools and data sources |
 | TUI | Planned | Polished terminal user interface |
 
+### Not in scope (real Claude Code extras)
+
+Production [Claude Code](https://docs.anthropic.com/en/docs/claude-code) includes many tools this challenge does **not** require — e.g. **Glob**, **Grep**, **Task** (delegated subagents), notebook edits, and deeper IDE integration. That is by design: CodeCrafters focuses on LLM + agent loop + Read/Write/Bash first. You can add similar tools locally later if you want parity.
+
 ---
 
 ## Getting Started
