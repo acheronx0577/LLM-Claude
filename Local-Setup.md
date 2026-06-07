@@ -6,8 +6,6 @@
 
 Follow these steps to set up your TypeScript project locally.
 
-![Local Setup — CodeCrafters onboarding steps completed](Pics/Local_Setup.png)
-
 ---
 
 ## 1. Clone the repository
@@ -44,6 +42,10 @@ codecrafters ping
 ## Done
 
 The first stage is now activated. Continue to **Stage 1: Communicate with the LLM**.
+
+*Example — what the CodeCrafters Local Setup page looks like after you clone the repo and connect the CLI (`codecrafters ping` succeeds):*
+
+![CodeCrafters Local Setup completed — clone and CLI connection both checked](Pics/Local_Setup.png)
 
 ---
 
