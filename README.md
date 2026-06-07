@@ -4,12 +4,27 @@
 
 A terminal-based AI coding assistant built for the [CodeCrafters Claude Code challenge](https://codecrafters.io/challenges/claude-code), featuring ACP editor integration and TypeScript LSP tools. Connects to an LLM via an OpenAI-compatible API, runs an agent loop, and supports Read, Write, and Bash tools (CodeCrafters).
 
+## Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Language | TypeScript (ES modules) |
+| Runtime | [Bun](https://bun.sh) locally · Node-compatible APIs |
+| LLM client | [OpenAI SDK](https://github.com/openai/openai-node) → [Groq](https://groq.com) or [OpenRouter](https://openrouter.ai) |
+| Agent protocols | [ACP](https://agentclientprotocol.com) (`@agentclientprotocol/sdk`) · [MCP](https://modelcontextprotocol.io) (`@modelcontextprotocol/sdk`) |
+| Code intelligence | TypeScript compiler API (`typescript`) — definitions, references, diagnostics |
+| Terminal UI | Custom ANSI TUI (alt screen, box drawing, slash commands) |
+| Validation | Zod |
+| Web search | DuckDuckGo (default) · optional Tavily / Brave APIs |
+| Tooling | `tsc` typecheck · CodeCrafters CLI for submit |
+| Platforms | Windows (`run.ps1`) · Unix (`your_program.sh`) |
+
 ## Run modes
 
 | Mode | Command | Tools |
 |------|---------|-------|
 | CodeCrafters submit | `.\run.ps1 -p "prompt"` | Read, Write, Bash |
-| Interactive chat | `.\run.ps1` or `npm run chat` | All 8 tools + edit review |
+| Interactive chat | `.\run.ps1` or `npm run chat` | TUI with mascot + input box (use `--plain` for classic) |
 | ACP server | `npm run acp` or `.\run.ps1 -Acp` | Read, Write, Bash via editor |
 
 ## Documentation
@@ -36,9 +51,13 @@ Full challenge guide, stage walkthroughs, and setup notes live in **[docs/ReadMe
 | FindReferences | Find all usages of a symbol (TypeScript) | Chat only |
 | GetDiagnostics | TypeScript errors and warnings | Chat only |
 
+**Interactive TUI (default in a real terminal):** Claude Code–style dashboard with orange border, welcome panel + pixel mascot, tips, recent activity, `>` prompt, and `/` slash-command menu. Use `--plain` for classic chat.
+
 **ACP mode** (`--acp`): speak the [Agent Client Protocol](https://agentclientprotocol.com) over stdio so editors like Zed can drive the agent. Uses the client's file system and terminal APIs for Read, Write, and Bash.
 
 Optional search APIs in `.env`: `TAVILY_API_KEY`, `BRAVE_SEARCH_API_KEY`.
+
+**MCP (chat only):** copy `mcp.json.example` to `mcp.json` and list MCP servers to spawn over stdio. Tools appear as `mcp_<server>_<tool>` (e.g. fetch, filesystem, databases). Set `MCP_CONFIG` to use a different config path. Not loaded in CodeCrafters submit mode.
 
 ## Scope vs real Claude Code
 
@@ -84,6 +103,8 @@ codecrafters submit
 | `GROQ_API_KEY` | Local (Groq) | Use with `GROQ_MODEL=openai/gpt-oss-120b` for tools |
 | `OPENROUTER_API_KEY` | CodeCrafters submit | Injected automatically on submit |
 | `TAVILY_API_KEY` | Optional | Better web search |
+| `MCP_CONFIG` | Optional | Path to MCP server config (default `mcp.json`) |
+| `MCP_DISABLE` | Optional | Set to `1` to skip MCP loading in chat |
 
 ## Project layout
 
@@ -96,10 +117,16 @@ app/
   editApproval.ts # Review / Accept all / Decline prompts in chat
   lspTools.ts   # TypeScript definition, references, diagnostics
   webSearch.ts  # Web search providers
-  chat.ts       # Interactive REPL
+  chat.ts       # Interactive REPL (plain mode)
+  tuiChat.ts    # Interactive TUI orchestration
+  tui/          # Claude Code–style dashboard, slash commands, prompt
   acp.ts        # Agent Client Protocol server
+  mcp.ts        # MCP client — external tools via stdio servers
   config.ts     # API key and model config
+  toolResult.ts # Shared tool output truncation
+  chatShared.ts # Exit commands, headers, shared error text
 docs/           # Challenge documentation
+mcp.json.example # Sample MCP server config (copy to mcp.json)
 run.ps1         # Windows runner (works without bun on PATH)
 your_program.sh # Unix runner
 ```
