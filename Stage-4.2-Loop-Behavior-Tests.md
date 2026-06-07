@@ -1,6 +1,6 @@
 # Stage 4.2 — Loop Behavior & Tests
 
-← [Back: Stage 4.1 — Agent Loop Structure](Stage-4.1-Agent-Loop-Structure.md) · [Next: Stage 5 — Implement the Write Tool →](ReadMe.md#stages)
+← [Back: Stage 4.1 — Agent Loop Structure](Stage-4.1-Agent-Loop-Structure.md) · [Next: Stage 5 — Implement the Write Tool →](Stage-5-Implement-Write-Tool.md)
 
 Output rules, test expectations, and key differences from Stage 3.
 
@@ -54,4 +54,4 @@ This requires the agent to **read** the README, **reason** over the content, and
 
 ---
 
-← [Back: Stage 4.1 — Agent Loop Structure](Stage-4.1-Agent-Loop-Structure.md) · [Next: Stage 5 — Implement the Write Tool →](ReadMe.md#stages)
+← [Back: Stage 4.1 — Agent Loop Structure](Stage-4.1-Agent-Loop-Structure.md) · [Next: Stage 5 — Implement the Write Tool →](Stage-5-Implement-Write-Tool.md)
