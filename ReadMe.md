@@ -22,6 +22,9 @@ Tell it *"Refactor main.py to use a class"* — and watch it read the file, gene
 - [Stage 1.1 — OpenRouter API Reference](Stage-1.1-OpenRouter-API.md)
 - [Stage 2 — Advertise the Read Tool](Stage-2-Advertise-Read-Tool.md)
 - [Stage 2.1 — Tools Reference](Stage-2.1-Tools-Reference.md)
+- [Stage 3 — Execute the Read Tool](Stage-3-Execute-Read-Tool.md)
+- [Stage 3.1 — Tool Calls Response](Stage-3.1-Tool-Calls-Reference.md)
+- [Stage 3.2 — Read Execution](Stage-3.2-Read-Execution.md)
 
 ---
 
@@ -91,7 +94,9 @@ Work through these stages in order. Each builds on the last.
 | 1.1 | **[OpenRouter API Reference](Stage-1.1-OpenRouter-API.md)** | — | Endpoint, request/response, optional local/free model tips |
 | 2 | **[Advertise the read tool](Stage-2-Advertise-Read-Tool.md)** | Easy | Expose a `read` tool schema so the model knows it exists |
 | 2.1 | **[Tools reference](Stage-2.1-Tools-Reference.md)** | — | Tool concepts, Read schema, solution shape, tests |
-| 3 | **Execute the read tool** | Easy | Handle tool calls and return file contents to the model |
+| 3 | **[Execute the read tool](Stage-3-Execute-Read-Tool.md)** | Easy | Handle tool calls and return file contents to the model |
+| 3.1 | **[Tool calls response](Stage-3.1-Tool-Calls-Reference.md)** | — | `tool_calls` JSON shape and key fields |
+| 3.2 | **[Read execution](Stage-3.2-Read-Execution.md)** | — | Execution flow, output rules, tests |
 | 4 | **Implement the agent loop** | Medium | Loop: model thinks → calls tools → observes results → repeats |
 | 5 | **Implement the write tool** | Easy | Let the agent create and modify files |
 | 6 | **Implement the bash tool** | Easy | Let the agent run shell commands safely |
