@@ -1,0 +1,138 @@
+chore: bootstrap CodeCrafters Claude Code repo with Bun
+chore: add TypeScript config and ES module layout
+chore: add Windows run.ps1 and Unix your_program.sh runners
+chore: configure codecrafters.yml for Bun buildpack
+docs: add challenge overview and stage index
+feat: add config module for Groq and OpenRouter providers
+feat: load API keys and model name from environment
+feat: send first chat completion request to the LLM
+feat: add main.ts entry with single-prompt submit mode
+fix: handle missing API key with a clear startup error
+feat: add system prompt for coding assistant behavior
+test: verify OpenRouter works in CodeCrafters sandbox
+docs: write Stage 1 LLM communication guide
+feat: define Read tool JSON schema for the model
+feat: advertise Read tool in chat completion tools array
+docs: document tool calling response format
+feat: parse assistant tool_calls from API response
+feat: execute Read tool against project-relative paths
+fix: reject path traversal in Read tool input
+feat: return file contents as tool result message
+test: add Read tool happy-path check for app/main.ts
+docs: write Stage 3 Read execution notes
+feat: implement agent loop with tool round-trips
+feat: append assistant and tool messages to history
+feat: stop loop when model returns plain text answer
+fix: guard agent loop against infinite tool recursion
+feat: trim conversation history to reduce token usage
+docs: document agent loop structure and tests
+feat: define Write tool schema for create and overwrite
+feat: execute Write tool with UTF-8 file output
+fix: create parent directories before writing files
+test: verify Write tool creates a new file on disk
+docs: write Stage 5 Write tool guide
+feat: define Bash tool schema for shell commands
+feat: run Bash tool in project root with captured output
+fix: cap Bash stdout and stderr in tool results
+test: verify Bash tool can list project files
+docs: write Stage 6 Bash tool guide
+feat: add interactive chat mode behind -Interactive flag
+feat: read user input in a simple REPL loop
+feat: support /exit and /quit chat commands
+feat: print assistant replies in plain terminal chat
+refactor: share chat headers and error text helpers
+feat: add Edit tool with unique string replacement
+feat: prompt before Write and Edit with y/n/a/d review
+feat: show diff stats during edit approval flow
+feat: add WebSearch tool with DuckDuckGo provider
+feat: support optional Tavily and Brave search APIs
+feat: add GoToDefinition TypeScript LSP tool
+feat: add FindReferences TypeScript LSP tool
+feat: add GetDiagnostics TypeScript LSP tool
+feat: load MCP servers from mcp.json config
+feat: expose MCP tools as mcp_server_tool names
+refactor: truncate long tool output before sending to model
+feat: add ACP server mode for editor integration
+feat: route Read Write Bash through ACP client APIs
+feat: add Agent Client Protocol session lifecycle
+refactor: extract tool result truncation helper
+feat: start custom ANSI terminal UI for chat
+feat: draw dashboard panel with welcome and tips
+feat: add pixel mascot and orange accent theme
+feat: render conversation region with role labels
+feat: add slash command menu for /help and /clear
+feat: support --plain flag for classic chat layout
+feat: add rounded outer shell border around TUI
+fix: align dashboard title divider with panel edges
+fix: redraw shell rows after middle region clears
+feat: add grey inner panel around dashboard block
+fix: place input separators above and below prompt
+feat: show streaming assistant text with word reveal
+feat: add status dots while model is thinking
+refactor: split TUI into screen dashboard and input modules
+refactor: extract frame wrapping and chat gutter helpers
+feat: add truecolor RGB theme matching design mockup
+fix: remove opaque backgrounds so terminal wallpaper shows
+feat: show recent tool activity lines in peach accent
+fix: keep cursor visible on > prompt row
+refactor: move dashboard meta builder to tui/meta.ts
+feat: open edited files in default editor on review
+refactor: extract runAgent loop from monolithic handler
+refactor: split executeTool into focused helpers
+feat: add pathSecurity checks for user-supplied paths
+feat: validate fetch URLs and search query length
+fix: harden MCP spawn and web search error handling
+refactor: reduce complexity in tui screen renderer
+refactor: simplify char width and wrap helpers
+docs: expand README with tools table and run modes
+docs: add tech stack and project layout sections
+docs: compare scope against production Claude Code
+docs: add local setup and environment variable table
+feat: add demo.png screenshot for README hero
+docs: place Project Views badge above progress banner
+refactor: remove redundant .env.example duplication
+refactor: improve path resolution across tool handlers
+refactor: tighten tool execution error messages
+docs: update README to use local demo image link
+chore: add experiments folder for commit timeline tests
+chore: track synthetic build log for history experiment
+docs: document how to regenerate commit timeline
+feat: spread development history across April to June
+feat: label experiment commits with readable messages
+fix: align commit dates for GitHub contribution graph
+docs: note CodeCrafters submit uses Read Write Bash only
+refactor: polish TUI slash command descriptions
+fix: debounce TUI renders during rapid transcript updates
+feat: clamp terminal width for small console windows
+fix: handle empty assistant content in agent loop
+test: typecheck app modules with tsc --noEmit
+docs: link stage docs from root README table
+feat: add mcp.json.example for optional MCP servers
+feat: support MCP_DISABLE env to skip MCP in chat
+fix: normalize assistant tool_calls before resend
+feat: show model and provider in dashboard meta rows
+fix: recover from Groq token limit with trimmed history
+refactor: unify edit approval between chat and TUI
+feat: add batch depth guard to TUI screen updates
+fix: preserve tool_calls when sanitizing messages
+docs: add Stage 4.2 loop behavior test notes
+docs: add Stage 5.2 Write execution test notes
+docs: add Stage 6.2 Bash execution test notes
+feat: improve web search result formatting and caps
+fix: handle MCP tool errors without crashing chat
+refactor: extract fetchSecurity helpers for outbound HTTP
+feat: add openInEditor helper for review workflow
+fix: validate bash working directory stays in project
+refactor: simplify dashboard split column layout
+feat: show cwd and tool summary in welcome panel
+fix: truncate long paths in dashboard without breaking ANSI
+docs: refresh docs ReadMe getting started section
+chore: pin OpenAI SDK and MCP dependency versions
+fix: handle SIGINT cleanly in interactive chat modes
+feat: add MIN_THINK_MS delay for natural TUI pacing
+refactor: extract TUI edit approval overlay module
+fix: correct shell bottom row after resize events
+feat: add REVEAL_WORD_MS streaming cadence tuning
+docs: document ACP and MCP run commands in README
+fix: skip MCP loading in CodeCrafters submit mode
+refactor: consolidate chatShared exit command list
